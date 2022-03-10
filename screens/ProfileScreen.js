@@ -29,10 +29,10 @@ const ProfileScreen = (props) => {
   return (
     <Background>
       <Logo />
-      <Headline>Profile</Headline>
+      <Headline>Profile - {props.Login.current.name}</Headline>
 
       <Button style={styles.button} mode="contained" onPress={_onLogoutPressed}>
-        Logout
+        Logout 
       </Button>
      
     </Background>

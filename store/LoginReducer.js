@@ -24,7 +24,7 @@ export const loginReducer = (state = INITIAL_STATE, action) => {
 
 export const login = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
-    axios.post(`${API_URL}/v1/auth/login`, data,{
+    axios.post(API_URL + `/v1/auth/login`, data,{
       headers: {
         'Content-Type': 'application/json'
       }
@@ -45,7 +45,7 @@ export const login = (data) => (dispatch, getState) => {
 
 export const signup = (data) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
-    axios.post(`${API_URL}/v1/auth/register`, data,{
+    axios.post(API_URL + `/v1/auth/register`, data,{
       headers: {
         'Content-Type': 'application/json'
       }
