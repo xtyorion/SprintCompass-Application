@@ -1,5 +1,9 @@
 import { StyleSheet } from 'react-native';
 
+const primary60 = "#ffffff";
+const primary30 = "#e0dce4";
+const primary10 = "#826cff";
+
 export const styles = StyleSheet.create({
     form: {
         margin: 30,
@@ -73,11 +77,51 @@ export const styles = StyleSheet.create({
         marginTop: 4,
     },
     label: {
-        color: '#826cff',
+        color: primary10,
     },
     link: {
         fontWeight: 'bold',
-        color: '#826cff',
+        color: primary10,
     },
+    container: {
+        flex: 1,
+        backgroundColor: "transparent",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    card: {
+        justifyContent: "center",
+        alignItems: "center",
+        width: 350,
+        height: 550,
+        bottom: 80
+    },
+    cardsText: {
+        fontSize: 22,
+    },
+    surfaceContainer: {
+        marginVertical: 7,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    surface: {
+        width: '100%',
+        backgroundColor: '#f0eef2',
+        borderRadius: 20,
+        borderColor: primary30,
+        borderWidth:1,
+        paddingVertical: 10,
+        paddingHorizontal: 5
+    },
+    conversationSender: {
+        marginLeft: 10
+    },
+    conversationLastMessage: {
+        marginLeft: 10
+    },
+    icSend: {
+        backgroundColor: 'transparent',
+
+    }
 
 });

@@ -1,14 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
+import { ImageBackground, StyleSheet } from 'react-native';
 import UserHomeScreen from './UserHomeScreen';
 import LikesListScreen from './LikesListScreen';
-import MessageListScreen from './MessageListScreen';
 import ProfileScreen from './ProfileScreen';
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MessengerStackScreen from './MessengerStackScreen';
 
 
 const UserHomeNavigatorScreen = props => {
@@ -17,7 +16,7 @@ const UserHomeNavigatorScreen = props => {
     return (
       <Tab.Navigator  
         screenOptions={{
-          headerShown: false,
+          headerShown: true,
           tabBarShowLabel: false,
           showLabel: false,
           tabBarStyle: {
@@ -28,7 +27,15 @@ const UserHomeNavigatorScreen = props => {
             elevation: 0,
             backgroundColor: 'transparent',
             height: 90,
-          }
+          },
+          headerStyle:{ backgroundColor: 'transparent' },
+          headerBackground: () => (
+            <ImageBackground
+              source={require('../assets/background_dot.png')}
+              resizeMode="repeat"
+              style={StyleSheet.absoluteFill}
+            ></ImageBackground>
+          )
         }}>
         <Tab.Screen name="Home" component={UserHomeScreen} options={{
           tabBarIcon: ({focused, size }) => (
@@ -40,7 +47,7 @@ const UserHomeNavigatorScreen = props => {
             <Ionicons name={focused ? "heart" : "heart-outline"} color={'#826cff'} size={size} />
           )
         }}/>
-        <Tab.Screen name="Messages" component={MessageListScreen} options={{
+        <Tab.Screen name="Messages" component={MessengerStackScreen} options={{
           tabBarIcon: ({focused, size}) => (
             <Ionicons name={focused ? "mail-open" : "mail-outline"} color={'#826cff'} size={size} />
           )

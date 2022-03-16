@@ -15,8 +15,9 @@ function AppNavigator() {
             <Stack.Navigator
                 initialRouteName="Home"
                 screenOptions={{
-                    headerShown: false
+                    headerShown: false,
                 }}
+               
             >
                 <Stack.Screen
                     name="HomeScreen"

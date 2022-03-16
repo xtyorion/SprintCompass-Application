@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Login, LOGIN, Signup, SIGNUP, Logout, LOGOUT } from './actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.API_URL;
 
@@ -31,7 +32,10 @@ export const login = (data) => (dispatch, getState) => {
     })
     .then(
       response => {
+        
         dispatch(Login(response.data))
+        saveCredentials(response.data);
+        
         return resolve();
         //save to localstorage
         
@@ -41,6 +45,15 @@ export const login = (data) => (dispatch, getState) => {
       }
     );
   });
+}
+const saveCredentials = async(data) => {
+  try {
+    data = JSON.stringify(data);
+    await AsyncStorage.setItem('currentLoggedUser',data);
+  } catch (error) {
+    // Error saving data
+    console.log(error)
+  }
 }
 
 export const signup = (data) => (dispatch, getState) => {

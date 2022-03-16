@@ -31,6 +31,7 @@ const LoginScreen = (props) => {
       )
       .then(success => {props.navigation.navigate('HomeScreen');})
       .catch(err => {
+          console.log("error", err)
           const credentialError = credentialsValidator(err.response.status);
 
           if (credentialError.email) {
@@ -50,7 +51,8 @@ const LoginScreen = (props) => {
     
 
     React.useLayoutEffect(() => {
-      console.log("conole", props);
+      setEmail({...email, value: "fake@example.com"});
+      setPassword({...password, value: "password1"});
     }, []);
 
     return (
