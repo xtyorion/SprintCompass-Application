@@ -12,6 +12,7 @@ import io from "socket.io-client";
 
 
 const MessagesScreen = (props) => {
+  const API_URL = process.env.API_URL;
   const socket = useRef(null);
   const flatList = useRef(null);
   const [message, setMessage] = useState("");
@@ -36,7 +37,7 @@ const MessagesScreen = (props) => {
   useEffect(() => {
 
     props.dispatch(getMessages(props.Conversation.currentConversation.id));
-    socket.current = io("ws://192.168.50.218:3000");
+    socket.current = io(API_URL);
     socket.current.emit("addUser", props.Login.current);
     socket.current.on("getMessage", data =>{
       setArrivalMessage({
