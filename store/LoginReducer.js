@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Login, LOGIN, Signup, SIGNUP, Logout, LOGOUT } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const INITIAL_STATE = {
   current: {},

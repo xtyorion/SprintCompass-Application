@@ -12,7 +12,7 @@ import io from "socket.io-client";
 
 
 const MessagesScreen = (props) => {
-  const API_URL = process.env.API_URL;
+  const API_URL = process.env.REACT_APP_API_URL;
   const socket = useRef(null);
   const flatList = useRef(null);
   const [message, setMessage] = useState("");
