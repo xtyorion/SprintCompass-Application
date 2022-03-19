@@ -24,6 +24,7 @@ export const loginReducer = (state = INITIAL_STATE, action) => {
 };
 
 export const login = (data) => (dispatch, getState) => {
+  console.log(API_URL);
   return new Promise((resolve, reject) => {
     axios.post(API_URL + `/v1/auth/login`, data,{
       headers: {
