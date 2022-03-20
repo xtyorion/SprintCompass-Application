@@ -5,62 +5,63 @@ import TextInput from '../components/TextInput';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import { connect } from 'react-redux';
-import {styles} from '../styles/styles';
+import { styles } from '../styles/styles';
 import { emailValidator, passwordValidator, credentialsValidator } from '../Utilities';
 import { login } from '../store/LoginReducer'
 
 const LoginScreen = (props) => {
-    const [email, setEmail] = useState({ value: '', error: '' });
-    const [password, setPassword] = useState({ value: '', error: '' });
+  const [email, setEmail] = useState({ value: '', error: '' });
+  const [password, setPassword] = useState({ value: '', error: '' });
 
-    const _onLoginPressed = async () => {
-      const emailError = emailValidator(email.value);
-      const passwordError = passwordValidator(password.value);
+  const _onLoginPressed = async () => {
+    const emailError = emailValidator(email.value);
+    const passwordError = passwordValidator(password.value);
+    
+    if (emailError || passwordError) {
+      setEmail({ ...email, error: emailError });
+      setPassword({ ...password, error: passwordError });
+      return;
+    }
 
-      if (emailError || passwordError) {
-        setEmail({ ...email, error: emailError });
-        setPassword({ ...password, error: passwordError });
-        return;
-      }
-
-      props.dispatch(
-        login({
-          email: email.value,
-          password: password.value,
-        })
-      )
-      .then(success => {props.navigation.navigate('HomeScreen');})
+    props.navigation.navigate('UserHomeNavigatorScreen');
+    props.dispatch(
+      login({
+        email: email.value,
+        password: password.value,
+      })
+    )
+      .then(success => { props.navigation.navigate('HomeScreen'); })
       .catch(err => {
-          console.log("error", err)
-          const credentialError = credentialsValidator(err.response.status);
+        console.log("error", err)
+        const credentialError = credentialsValidator(err.response.status);
 
-          if (credentialError.email) {
-            setEmail({ ...email, error: credentialError.email });
-            setPassword({ ...password, error: credentialError.password });
-            return;
-          }
+        if (credentialError.email) {
+          setEmail({ ...email, error: credentialError.email });
+          setPassword({ ...password, error: credentialError.password });
+          return;
         }
+      }
       );
 
 
-      
-      //Check login
-      
-     // navigation.navigate('Dashboard');
-    };
-    
 
-    React.useLayoutEffect(() => {
-      setEmail({...email, value: "fake@example.com"});
-      setPassword({...password, value: "password1"});
-    }, []);
+    //Check login
 
-    return (
-      <Background>
-        <Logo />
-        <Headline>Welcome back.</Headline>
+    // navigation.navigate('Dashboard');
+  };
 
-        <TextInput
+
+  React.useLayoutEffect(() => {
+    setEmail({ ...email, value: "fake@example.com" });
+    setPassword({ ...password, value: "password1" });
+  }, []);
+
+  return (
+    <Background>
+      <Logo />
+      <Headline>Welcome back.</Headline>
+
+      <TextInput
         label="Email"
         returnKeyType="next"
         value={email.value}
@@ -100,8 +101,8 @@ const LoginScreen = (props) => {
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
       </View>
-      </Background>
-    );
+    </Background>
+  );
 }
 
 const mapStateToProps = (state) => {
