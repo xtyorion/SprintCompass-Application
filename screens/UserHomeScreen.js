@@ -6,23 +6,22 @@ import CardsComponent from '../components/CardsComponent';
 import StatusCard from '../components/StatusCard';
 import {styles} from '../styles/styles';
 import SwipeCards from "react-native-swipe-cards-deck";
+import { getProspectUsers } from '../store/UserReducer';
+import { connect } from 'react-redux';
 
 const UserHomeScreen = (props) => {
-  const [cards, setCards] = useState();
+  const [isCardsReady, setIsCardsReady] = useState(false);
 
   // replace with real remote data fetching
   useEffect(() => {
-    setTimeout(() => {
-      setCards([
-        { text: "Tomato", backgroundColor: "red" },
-        { text: "Aubergine", backgroundColor: "purple" },
-        { text: "Courgette", backgroundColor: "green" },
-        { text: "Blueberry", backgroundColor: "blue" },
-        { text: "Umm...", backgroundColor: "cyan" },
-        { text: "orange", backgroundColor: "orange" },
-      ]);
-    }, 3000);
+    props.dispatch(getProspectUsers());
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsCardsReady(true);
+    }, 3000);
+  }, [props.User.prospectUsers]);
 
   function handleYup(card) {
     console.log(`Yup for ${card.text}`);
@@ -36,11 +35,11 @@ const UserHomeScreen = (props) => {
   return (
     <Background>
       <View style={styles.container}>
-        {cards ? (
+        {isCardsReady ? (
           <SwipeCards
-            cards={cards}
+            cards={props.User.prospectUsers}
             renderCard={(cardData) => <CardsComponent data={cardData} />}
-            keyExtractor={(cardData) => String(cardData.text)}
+            keyExtractor={(cardData) => String(cardData.name)}
             renderNoMoreCards={() => <StatusCard text="No more cards..." />}
             actions={{
               nope: { onAction: handleNope, show: false, },
@@ -58,4 +57,9 @@ const UserHomeScreen = (props) => {
   );
 }
 
-export default UserHomeScreen;
+const mapStateToProps = (state) => {
+  const { User } = state
+  return { User }
+};
+
+export default connect(mapStateToProps)(UserHomeScreen);

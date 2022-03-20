@@ -14,10 +14,6 @@ import {
 const Message = ({message}) => {
   const [image, setImage] = useState(0);
 
-  useEffect(() => {
-    console.log("message", message)
-  }, []);
-
   function gotoMessages() {
     message.navigation(message.id);
   }

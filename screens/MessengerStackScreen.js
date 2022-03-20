@@ -9,6 +9,7 @@ const MessengerStackScreen = () => {
     <MessengerStack.Navigator  
       screenOptions={{
       headerShown: false,}}
+      initialRouteName="Conversations"
       >
       <MessengerStack.Screen name="Conversations" component={ConversationsScreen} />
       <MessengerStack.Screen name="ConversationDetails" component={ConversationDetails} />

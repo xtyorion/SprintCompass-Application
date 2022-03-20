@@ -21,35 +21,32 @@ export const messageReducer = (state = INITIAL_STATE, action) => {
 };
 
 export const getMessages = (data) => (dispatch, getState) => {
-  return new Promise((resolve, reject) => {
-    (async () => {
-      try {
-        const user = await AsyncStorage.getItem('currentLoggedUser')
-        const currentLoggedUser = JSON.parse(user);
-        if(currentLoggedUser !== null) {
-          axios.get(API_URL + `/v1/messages/` + data,{
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-            }
-          })
-          .then(
-            response => {
-              const {data} = response;
-              dispatch(Get_Messages(data));
-              return resolve();
-            },
-            err => {
-              return reject(err);
-            }
-          );
-        }
-      } catch(e) {
-        // error reading value
-        console.log(e)
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      if(currentLoggedUser !== null) {
+        
+        axios.get(API_URL + `/v1/messages/` + data,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            const {data} = response;
+            dispatch(Get_Messages(data));
+          },
+          err => {
+          }
+        );
       }
-    })().catch(e => console.log("Caught: " + e));
-  });
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
 }
 
 export const sendMessage = (data) => (dispatch, getState) => {

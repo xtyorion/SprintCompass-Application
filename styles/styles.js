@@ -122,6 +122,9 @@ export const styles = StyleSheet.create({
     icSend: {
         backgroundColor: 'transparent',
 
+    },
+    messengerButton: {
+        marginHorizontal: 3,
     }
 
 });

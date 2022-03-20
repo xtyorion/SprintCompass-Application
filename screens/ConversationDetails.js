@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Background from '../components/Background';
 import {styles} from '../styles/styles';
-import {View, FlatList, TouchableOpacity, Keyboard} from 'react-native';
+import {View, FlatList, TouchableOpacity, Keyboard, Text} from 'react-native';
 import { connect } from 'react-redux';
 import { getMessages, sendMessage } from '../store/MessageReducer';
 import { Avatar, Title, Paragraph} from 'react-native-paper';
@@ -91,7 +91,7 @@ const MessagesScreen = (props) => {
           numberOfLines={1}
           style={{marginTop: 10}}
         >
-          {props.Conversation.currentConversation.sender.name}
+          {props.Conversation.currentConversation.sender?.name}
         </Title>
         </View>
         <View style={{marginTop:22 , backgroundColor: '#f0eef2', width: 430, height: '62%', borderColor: '#e0dce4',

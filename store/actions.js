@@ -5,6 +5,7 @@ export const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 export const GET_MESSAGES = "GET_MESSAGES";
 export const SET_CONVERSATION = "SET_CONVERSATION";
 export const ADD_MESSAGE = "ADD_MESSAGE";
+export const GET_PROSPECT_USERS = "GET_PROSPECT_USERS";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -33,4 +34,8 @@ export const Set_Conversation = (conversation) => ({
 export const Add_Message = (message) => ({
   type: ADD_MESSAGE,
   payload: message
+})
+export const Get_Prospect_Users = (users) => ({
+  type: GET_PROSPECT_USERS,
+  payload: users
 })

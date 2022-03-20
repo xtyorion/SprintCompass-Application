@@ -21,36 +21,33 @@ export const conversationReducer = (state = INITIAL_STATE, action) => {
 };
 
 export const getConversations = (data) => (dispatch, getState) => {
-  return new Promise((resolve, reject) => {
-    (async () => {
-      try {
-        const data = await AsyncStorage.getItem('currentLoggedUser')
-        const currentLoggedUser = JSON.parse(data);
-        const userId = currentLoggedUser.user.id;
-        if(currentLoggedUser !== null) {
-          axios.get(API_URL + `/v1/conversations/` + userId,{
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-            }
-          })
-          .then(
-            response => {
-              const {data} = response;
-              dispatch(Get_Conversations(extractUserFromMembers(data, userId)))
-              return resolve();
-            },
-            err => {
-              return reject(err);
-            }
-          );
-        }
-      } catch(e) {
-        // error reading value
-        console.log(e)
+  (async () => {
+    try {
+      const data = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(data);
+      const userId = currentLoggedUser.user.id;
+      if(currentLoggedUser !== null) {
+        console.log("API", API_URL)
+        axios.get(API_URL + `/v1/conversations/` + userId,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            const {data} = response;
+            dispatch(Get_Conversations(extractUserFromMembers(data, userId)))
+          },
+          err => {
+          }
+        );
       }
-    })().catch(e => console.log("Caught: " + e));
-  });
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
 }
 
 const extractUserFromMembers = (data, userId) => {
