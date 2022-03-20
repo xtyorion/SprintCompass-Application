@@ -125,6 +125,11 @@ export const styles = StyleSheet.create({
     },
     messengerButton: {
         marginHorizontal: 3,
+    },
+    admin_modules: {
+        width: '50%',
+        height: 100,
+        padding: 10,
     }
 
 });

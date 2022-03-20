@@ -9,6 +9,7 @@ import ProfileScreen from './ProfileScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MessengerStackScreen from './MessengerStackScreen';
+import AdministratorStackScreen from './AdministratorStackScreen'
 import { connect } from 'react-redux';
 import { Set_Conversation } from '../store/actions';
 
@@ -17,6 +18,7 @@ import {styles} from '../styles/styles';
 
 
 const UserHomeNavigatorScreen = props => {
+  const isAdmin = true;
   const Tab = createBottomTabNavigator();
   const [headerRightMessage, setHeaderRightMessage] = useState(null);
 
@@ -90,6 +92,14 @@ const UserHomeNavigatorScreen = props => {
             <FontAwesome name={focused ? "user" : "user-o"} color={'#826cff'} size={size} />
           )
         }}/>
+        {isAdmin &&
+        <Tab.Screen name="Administrator" component={AdministratorStackScreen} options={{
+          tabBarIcon: ({focused, size}) => (
+            <Ionicons name="settings-outline" color={'#826cff'} size={size} />
+          )
+        }}/>
+        }
+
       </Tab.Navigator>
     );
 }
