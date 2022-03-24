@@ -4,7 +4,6 @@ import { TouchableOpacity } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import {styles} from '../styles/styles';
 import Background from '../components/Background';
-import Dine from '../components'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const AdministratorDashboardScreen = () => {
@@ -33,8 +32,8 @@ const AdministratorDashboardScreen = () => {
                 borderRadius: 1,
                 shadowColor: "#000",
                 elevation: 1,}}>
-                <Dine/>
-                <Text>Activities</Text>
+                <FontAwesome5 name="users" color={'#826cff'} size={50} style={{marginTop: 10}}/>
+                <Text style={{right: 0, position: 'absolute', marginTop: 30, marginEnd: 5, fontSize: 25}}>Activities</Text>
               </TouchableOpacity>
           </View>
         </View>
