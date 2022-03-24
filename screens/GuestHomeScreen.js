@@ -8,10 +8,10 @@ const GuestHomeScreen = (props) => {
   return (
     <Background>
       <Logo />
-      <Headline>IT Dating App</Headline>
+      <Headline>SprintCompass Application</Headline>
   
       <Paragraph>
-        The easiest way to start your amazing date.
+        One Application to replace them all
       </Paragraph>
       <Button style={styles.button} mode="contained" onPress={() => props.navigation.navigate('LoginScreen')}>
         Login
