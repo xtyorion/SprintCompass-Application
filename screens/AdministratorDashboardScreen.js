@@ -1,10 +1,11 @@
 import React, {useEffect} from 'react';
 import {View, Text} from 'react-native';
 import { TouchableOpacity } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
+import { Avatar, Button, Background, Card, Title, Paragraph } from 'react-native-paper';
 import {styles} from '../styles/styles';
-import Background from '../components/Background';
-import Dine from '../components'
+
+//import Background from '../components/Background';
+//import Dine from '../components'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const AdministratorDashboardScreen = () => {
