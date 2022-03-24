@@ -8,6 +8,7 @@ import {styles} from '../styles/styles';
 import SwipeCards from "react-native-swipe-cards-deck";
 import { getProspectUsers } from '../store/UserReducer';
 import { connect } from 'react-redux';
+import Logo from '../components/Logo';
 
 const UserHomeScreen = (props) => {
   const [isCardsReady, setIsCardsReady] = useState(false);
@@ -35,12 +36,14 @@ const UserHomeScreen = (props) => {
   return (
     <Background>
       <View style={styles.container}>
+      <Headline>Welcome to the Home Page!</Headline>
+      <Logo />
         {isCardsReady ? (
           <SwipeCards
             cards={props.User.prospectUsers}
             renderCard={(cardData) => <CardsComponent data={cardData} />}
             keyExtractor={(cardData) => String(cardData.name)}
-            renderNoMoreCards={() => <StatusCard text="No more cards..." />}
+            renderNoMoreCards={() => <StatusCard text="You can navigate to the time board, list board, your profile and settings with the icons below." />}
             actions={{
               nope: { onAction: handleNope, show: false, },
               yup: { onAction: handleYup,  show: false, },

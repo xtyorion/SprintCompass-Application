@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { Button, Headline, Paragraph, Text } from 'react-native-paper';
 import UserHomeScreen from './UserHomeScreen';
-import LikesListScreen from './LikesListScreen';
+import TimeListScreen from './TimeListScreen';
 import ProfileScreen from './ProfileScreen';
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -69,14 +69,14 @@ const UserHomeNavigatorScreen = props => {
             <Ionicons name={focused ? "home" : "home-outline"} color={'#826cff'} size={size} />
           ),
         }}/>
-        <Tab.Screen name="Likes" component={LikesListScreen} options={{
+        <Tab.Screen name="Time" component={TimeListScreen} options={{
           tabBarIcon: ({focused, size}) => (
-            <Ionicons name={focused ? "heart" : "heart-outline"} color={'#826cff'} size={size} />
+            <Ionicons name={focused ? "time" : "time-outline"} color={'#826cff'} size={size} />
           )
         }}/>
-        <Tab.Screen name="Messages" component={MessengerStackScreen} options={{
+        <Tab.Screen name="List" component={MessengerStackScreen} options={{
           tabBarIcon: ({focused, size}) => (
-            <Ionicons name={focused ? "mail-open" : "mail-outline"} color={'#826cff'} size={size} />
+            <Ionicons name={focused ? "list" : "list-outline"} color={'#826cff'} size={size} />
           ),
           headerRight: (nav) => (
             headerRightMessage
