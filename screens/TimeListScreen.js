@@ -4,15 +4,13 @@ import Background from '../components/Background';
 import Logo from '../components/Logo';
 import {styles} from '../styles/styles';
 
-const LikesListScreen = (props) => {
+const TimeListScreen = (props) => {
   return (
     <Background>
       <Logo />
-      <Headline>Likes List</Headline>
-  
-     
+      <Headline>Time Board</Headline>
     </Background>
   );
 }
 
-export default LikesListScreen;
+export default TimeListScreen;
