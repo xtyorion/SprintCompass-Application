@@ -9,7 +9,7 @@ import SignupScreen from '../screens/SignupScreen';
 import ConversationsScreen from '../screens/ConversationsScreen';
 import ConversationDetails from '../screens/ConversationDetails';
 import GuestHomeScreen from '../screens/GuestHomeScreen';
-import LikesListScreen from '../screens/LikesListScreen';
+import TimeListScreen from '../screens/TimeListScreen';
 import MessengerStackScreen from '../screens/MessengerStackScreen';
 import UserHomeNavigatorScreen from '../screens/UserHomeNavigatorScreen';
 import UserHomeScreen from '../screens/UserHomeScreen';
@@ -77,8 +77,8 @@ function AppNavigator() {
                     }}
                 />
                 <Stack.Screen
-                    name="LikesListScreen"
-                    component={LikesListScreen}
+                    name="TimeListScreen"
+                    component={TimeListScreen}
                     options={{
                         title: '',
                     }}
