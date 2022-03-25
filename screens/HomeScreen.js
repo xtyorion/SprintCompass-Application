@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import GuestHomeScreen from './GuestHomeScreen';
-import UserHomeNavigatorScreen from './UserHomeNavigatorScreen';
+import UserHomeNavigatorScreen from '../navigation/UserHomeNavigatorScreen';
 
 const HomeScreen = (props) => {
   if (props.Login.isLoggedIn)

@@ -1,68 +1,72 @@
 import React, {useState, useEffect} from 'react';
-import { Button, Headline, Paragraph, } from 'react-native-paper';
+import { Button, Headline, Provider, Menu, Divider } from 'react-native-paper';
 import { View, Text } from 'react-native';
 import Background from '../components/Background';
-import CardsComponent from '../components/CardsComponent';
-import StatusCard from '../components/StatusCard';
 import {styles} from '../styles/styles';
-import SwipeCards from "react-native-swipe-cards-deck";
-import { getProspectUsers } from '../store/UserReducer';
+import { getUserProjects } from '../store/UserReducer';
 import { connect } from 'react-redux';
 import Logo from '../components/Logo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const UserHomeScreen = (props) => {
-  const [isCardsReady, setIsCardsReady] = useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [menuItems, setMenuItems] = useState([]);
+  const [projectTitle, setProjectTitle] = useState("Projects");
 
-  // replace with real remote data fetching
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
+
+
+  useEffect(()=>{
+    props.dispatch(getUserProjects());
+  },[]);
+
   useEffect(() => {
-    props.dispatch(getProspectUsers());
-  }, []);
+    setProjectTitle(props.User.currentProject.productName)
+  }, [props.User.currentProject]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsCardsReady(true);
-    }, 3000);
-  }, [props.User.prospectUsers]);
+    for (var project of props.User.projects) {
+      setMenuItems(oldArray => [...oldArray, <Menu.Item key={project.id} onPress={() => {}} title={project.productName}/>]);
+    }
+  }, [props.User.projects]);
 
-  function handleYup(card) {
-    console.log(`Yup for ${card.text}`);
-    return true; // return false if you wish to cancel the action
-  }
-  function handleNope(card) {
-    console.log(`Nope for ${card.text}`);
-    return true;
-  }
-  
+
   return (
     <Background>
+      <Provider>
+        <View
+          style={{
+            paddingTop: 10,
+            position: 'relative',
+          }}>
+          <Menu
+            visible={visible}
+            onDismiss={closeMenu}
+            style={{marginLeft: 60, marginTop: 30}}
+            anchor={
+              <Button onPress={openMenu}>
+                {projectTitle}
+                <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
+              </Button>
+              }>
+            {menuItems}
+            <Divider />
+            <Menu.Item onPress={() => {props.navigation.navigate('ProjectDetailsScreen')}} title="New Project" />
+          </Menu>
+        </View>
+      </Provider>
       <View style={styles.container}>
-      <Headline>Welcome to the Home Page!</Headline>
+      <Headline>Dashboard!</Headline>
       <Logo />
-        {isCardsReady ? (
-          <SwipeCards
-            cards={props.User.prospectUsers}
-            renderCard={(cardData) => <CardsComponent data={cardData} />}
-            keyExtractor={(cardData) => String(cardData.name)}
-            renderNoMoreCards={() => <StatusCard text="You can navigate to the time board, list board, your profile and settings with the icons below." />}
-            actions={{
-              nope: { onAction: handleNope, show: false, },
-              yup: { onAction: handleYup,  show: false, },
-            }}
-            // If you want a stack of cards instead of one-per-one view, activate stack mode
-            // stack={true}
-            // stackDepth={3}
-          />
-        ) : (
-          <StatusCard text="Loading..." />
-        )}
       </View>
     </Background>
   );
 }
 
 const mapStateToProps = (state) => {
-  const { User } = state
-  return { User }
+  const { User, Project } = state
+  return { User, Project }
 };
 
 export default connect(mapStateToProps)(UserHomeScreen);

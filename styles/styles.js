@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const primary60 = "#ffffff";
 const primary30 = "#e0dce4";
-const primary10 = "#826cff";
+export const primary10 = "#826cff";
 
 export const styles = StyleSheet.create({
     form: {

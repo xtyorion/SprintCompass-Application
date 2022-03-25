@@ -5,7 +5,9 @@ export const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 export const GET_MESSAGES = "GET_MESSAGES";
 export const SET_CONVERSATION = "SET_CONVERSATION";
 export const ADD_MESSAGE = "ADD_MESSAGE";
-export const GET_PROSPECT_USERS = "GET_PROSPECT_USERS";
+export const SET_USER_PROJECTS = "SET_USER_PROJECTS";
+export const SET_PROJECT = "SET_PROJECT";
+export const SET_PROJECT_LOGS = "SET_PROJECT_LOGS";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -35,7 +37,15 @@ export const Add_Message = (message) => ({
   type: ADD_MESSAGE,
   payload: message
 })
-export const Get_Prospect_Users = (users) => ({
-  type: GET_PROSPECT_USERS,
-  payload: users
+export const Set_User_Projects = (projects) => ({
+  type: SET_USER_PROJECTS,
+  payload: projects
+})
+export const Set_Project = (project) => ({
+  type: SET_PROJECT,
+  payload: project
+})
+export const Set_Project_Logs = (logs) => ({
+  type: SET_PROJECT_LOGS,
+  payload: logs
 })

@@ -8,12 +8,11 @@ import { Avatar, Title, Paragraph} from 'react-native-paper';
 import TextInput from '../components/TextInput';
 import Message from '../components/MessageComponent';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import io from "socket.io-client";
 
 
 const MessagesScreen = (props) => {
   const API_URL = process.env.REACT_APP_API_URL;
-  const socket = useRef(null);
+  // const socket = useRef(null);
   const flatList = useRef(null);
   const [message, setMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState({});
@@ -37,16 +36,16 @@ const MessagesScreen = (props) => {
   useEffect(() => {
 
     props.dispatch(getMessages(props.Conversation.currentConversation.id));
-    socket.current = io(API_URL);
-    socket.current.emit("addUser", props.Login.current);
-    socket.current.on("getMessage", data =>{
-      setArrivalMessage({
-        id: Date.now(),
-        senderId: data.senderId,
-        message: data.message,
-        createdAt: Date.now(),
-      });
-    });
+    // socket.current = io(API_URL);
+    // socket.current.emit("addUser", props.Login.current);
+    // socket.current.on("getMessage", data =>{
+    //   setArrivalMessage({
+    //     id: Date.now(),
+    //     senderId: data.senderId,
+    //     message: data.message,
+    //     createdAt: Date.now(),
+    //   });
+    // });
   },[]);
   useEffect(() => {
     if(arrivalMessage && props.Conversation.currentConversation.sender.id === arrivalMessage.senderId?.id){
@@ -59,7 +58,7 @@ const MessagesScreen = (props) => {
   },[arrivalMessage]);
 
   const submitChatMessage = () => {
-    socket.emit('chat message', state.chatMessage);
+    // socket.emit('chat message', state.chatMessage);
     setState({chatMessage: ''});
   }
 
@@ -71,7 +70,7 @@ const MessagesScreen = (props) => {
       receiverId: props.Conversation.currentConversation.sender.id,
     }
     props.dispatch(sendMessage(messageItem));
-    socket.current.emit("sendMessage", messageItem)
+    // socket.current.emit("sendMessage", messageItem)
 
     setMessage({ value: '', error: '' });
     Keyboard.dismiss();

@@ -9,9 +9,8 @@ import SignupScreen from '../screens/SignupScreen';
 import ConversationsScreen from '../screens/ConversationsScreen';
 import ConversationDetails from '../screens/ConversationDetails';
 import GuestHomeScreen from '../screens/GuestHomeScreen';
-import TimeListScreen from '../screens/TimeListScreen';
-import MessengerStackScreen from '../screens/MessengerStackScreen';
-import UserHomeNavigatorScreen from '../screens/UserHomeNavigatorScreen';
+// import MessengerStackScreen from '../stacks/UserHomeStackScreen';
+import UserHomeNavigatorScreen from './UserHomeNavigatorScreen';
 import UserHomeScreen from '../screens/UserHomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
@@ -21,7 +20,7 @@ function AppNavigator() {
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName="Home"
+                initialRouteName="HomeScreen"
                 screenOptions={{
                     headerShown: false,
                 }}
@@ -48,7 +47,7 @@ function AppNavigator() {
                         title: '',
                     }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="ProfileScreen"
                     component={ProfileScreen}
                     options={{
@@ -68,7 +67,7 @@ function AppNavigator() {
                     options={{
                         title: '',
                     }}
-                />
+                /> */}
                 <Stack.Screen
                     name="GuestHomeScreen"
                     component={GuestHomeScreen}
@@ -76,20 +75,20 @@ function AppNavigator() {
                         title: '',
                     }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="TimeListScreen"
                     component={TimeListScreen}
                     options={{
                         title: '',
                     }}
-                />
-                <Stack.Screen
+                /> */}
+                {/* <Stack.Screen
                     name="MessengerStackScreen"
                     component={MessengerStackScreen}
                     options={{
                         title: '',
                     }}
-                />
+                /> */}
                 <Stack.Screen
                     name="UserHomeNavigatorScreen"
                     component={UserHomeNavigatorScreen}
@@ -97,13 +96,13 @@ function AppNavigator() {
                         title: '',
                     }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="UserHomeScreen"
                     component={UserHomeScreen}
                     options={{
                         title: '',
                     }}
-                />
+                />  */}
             </Stack.Navigator>
         </NavigationContainer>
     );

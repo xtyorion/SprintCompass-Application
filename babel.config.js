@@ -12,7 +12,8 @@ module.exports = function(api) {
           'react-native-paper/babel',
           ["inline-dotenv",{
             path: '.env.production'
-          }]
+          }],
+          'react-native-reanimated/plugin',
           ],
       },
       development: {
@@ -20,8 +21,9 @@ module.exports = function(api) {
           'react-native-paper/babel',
           ["inline-dotenv",{
             path: '.env.development'
-          }]
-          ],
+          }],
+          'react-native-reanimated/plugin',
+        ],
       },
     },
   };

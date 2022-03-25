@@ -23,7 +23,7 @@ const LoginScreen = (props) => {
       return;
     }
 
-    props.navigation.navigate('UserHomeNavigatorScreen');
+    //props.navigation.navigate('UserHomeNavigatorScreen');
     props.dispatch(
       login({
         email: email.value,
