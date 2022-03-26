@@ -1,33 +1,34 @@
 import axios from 'axios';
-import { GET_LOGS, Set_Project_Logs, SET_PROJECT_LOGS } from './actions';
+import { Set_Logs, SET_LOGS, Set_Current_Log, SET_CURRENT_LOG } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const INITIAL_STATE = {
   items: [],
+  currentLog: {}
 };
 
 export const logReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case GET_LOGS:
+    case SET_LOGS:
       return {...state, items: action.payload}
-    case SET_PROJECT_LOGS:
-      return {...state, items: action.payload}
+    case SET_CURRENT_LOG: 
+      return {...state, currentLog: action.payload}
     default:
       return state
   }
 };
 
-export const getProjectLogs = (data) => (dispatch, getState) => {
+export const getLogs = (projectId) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
         const user = await AsyncStorage.getItem('currentLoggedUser')
         const currentLoggedUser = JSON.parse(user);
-        if(currentLoggedUser !== null) {
+        if(projectId && currentLoggedUser) {
           
-          axios.get(API_URL + `/v1/projects/` + data +'/logs',{
+          axios.get(API_URL + `/v1/projects/` + projectId +'/logs',{
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
@@ -36,7 +37,7 @@ export const getProjectLogs = (data) => (dispatch, getState) => {
           .then(
             response => {
               const {data} = response;
-              dispatch(Set_Project_Logs(data));
+              dispatch(Set_Logs(data));
               return resolve(data);
             },
             err => {

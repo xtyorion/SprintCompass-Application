@@ -1,13 +1,11 @@
 export const LOGIN = "LOGIN";
 export const SIGNUP = "SIGNUP";
 export const LOGOUT = "LOGOUT";
-export const GET_CONVERSATIONS = "GET_CONVERSATIONS";
-export const GET_MESSAGES = "GET_MESSAGES";
-export const SET_CONVERSATION = "SET_CONVERSATION";
-export const ADD_MESSAGE = "ADD_MESSAGE";
-export const SET_USER_PROJECTS = "SET_USER_PROJECTS";
-export const SET_PROJECT = "SET_PROJECT";
-export const SET_PROJECT_LOGS = "SET_PROJECT_LOGS";
+export const SET_PROJECTS = "SET_PROJECTS";
+export const SET_CURRENT_PROJECT = "SET_CURRENT_PROJECT";
+export const SET_LOGS = "SET_LOGS";
+export const SET_CURRENT_LOG = "SET_CURRENT_LOG";
+export const SET_CURRENT_USER = "SET_CURRENT_USER";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -21,31 +19,23 @@ export const Signup = (user) => ({
   type: SIGNUP,
   payload: user
 })
-export const Get_Conversations = (conversations) => ({
-  type: GET_CONVERSATIONS,
-  payload: conversations
-})
-export const Get_Messages = (messages) => ({
-  type: GET_MESSAGES,
-  payload: messages
-})
-export const Set_Conversation = (conversation) => ({
-  type: SET_CONVERSATION,
-  payload: conversation
-})
-export const Add_Message = (message) => ({
-  type: ADD_MESSAGE,
-  payload: message
-})
-export const Set_User_Projects = (projects) => ({
-  type: SET_USER_PROJECTS,
+export const Set_Projects = (projects) => ({
+  type: SET_PROJECTS,
   payload: projects
 })
-export const Set_Project = (project) => ({
-  type: SET_PROJECT,
+export const Set_Current_Project = (project) => ({
+  type: SET_CURRENT_PROJECT,
   payload: project
 })
-export const Set_Project_Logs = (logs) => ({
-  type: SET_PROJECT_LOGS,
+export const Set_Logs = (logs) => ({
+  type: SET_LOGS,
   payload: logs
+})
+export const Set_Current = (log) => ({
+  type: SET_CURRENT_LOG,
+  payload: log
+})
+export const Set_Current_User = (user) => ({
+  type: SET_CURRENT_USER,
+  payload: user
 })

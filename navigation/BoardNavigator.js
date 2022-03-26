@@ -1,14 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import BoardScreen from '../screens/BoardScreen';
-import {primary10} from '../styles/styles'
-import {View} from 'react-native'
-import { Button, Headline, Provider, Menu, Divider } from 'react-native-paper';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {primary10} from '../styles/styles';
+import {getLogs} from '../store/LogReducer'
+import { connect } from 'react-redux';
 
 const Tab = createMaterialTopTabNavigator();
 
-const BoardListScreen = () => {
+const BoardNavigator = (props) => {
   const [visible, setVisible] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [projectTitle, setProjectTitle] = useState("Projects");
@@ -16,14 +15,19 @@ const BoardListScreen = () => {
   const openMenu = () => setVisible(true);
   const closeMenu = () => setVisible(false);
 
+  useEffect(()=>{
+    props.dispatch(getLogs(props.Project.currentProject.id));
+  },[]);
+
 
   return (
     <Tab.Navigator 
     screenOptions={{
+      swipeEnabled: false,
       tabBarActiveTintColor: primary10,
       tabBarIndicatorStyle: primary10,
       tabBarStyle: {
-        marginTop: 20,
+        top: -10,
         elevation: 0,
         backgroundColor: 'transparent',
       },
@@ -43,5 +47,9 @@ const BoardListScreen = () => {
     </Tab.Navigator>
   );
 }
+const mapStateToProps = (state) => {
+  const { Project, Log } = state
+  return { Project, Log }
+};
 
-export default BoardListScreen;
+export default connect(mapStateToProps)(BoardNavigator);

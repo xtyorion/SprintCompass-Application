@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { Login, LOGIN, Signup, SIGNUP, Logout, LOGOUT } from './actions';
+import { Login, LOGIN, Signup, SIGNUP, Logout, LOGOUT, Set_Current_User } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const INITIAL_STATE = {
-  current: {},
   isLoggedIn: false,
   auth: {}
 };
@@ -13,11 +12,11 @@ const INITIAL_STATE = {
 export const loginReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case LOGIN:
-      return {...state, current: action.payload.user, auth: action.payload.tokens, isLoggedIn: true}
+      return {...state, auth: action.payload.tokens, isLoggedIn: true}
     case SIGNUP:
-      return {...state, current: action.payload.user, auth: action.payload.tokens, isLoggedIn: true}
+      return {...state, auth: action.payload.tokens, isLoggedIn: true}
     case LOGOUT:
-      return {...state, current: action.payload.current, auth: action.payload.auth, isLoggedIn: action.payload.isLoggedIn}
+      return {...state, auth: action.payload.auth, isLoggedIn: action.payload.isLoggedIn}
     default:
       return state
   }
@@ -33,8 +32,9 @@ export const login = (data) => (dispatch, getState) => {
     })
     .then(
       response => {
-        
-        dispatch(Login(response.data))
+        console.log("Tokens for testing: ",response.data.tokens)
+        dispatch(Login(response.data.tokens))
+        dispatch(Set_Current_User(response.data.user))
         saveCredentials(response.data);
         
         return resolve();

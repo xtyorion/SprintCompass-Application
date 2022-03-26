@@ -30,6 +30,7 @@
     "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "^3.4.0",
     "react-native-swipe-cards-deck": "^0.3.0",
+    "react-native-swipeable-item": "^2.0.2",
     "react-native-tab-view": "^3.1.1",
     "react-native-vector-icons": "^9.1.0",
     "react-native-web": "0.17.1",

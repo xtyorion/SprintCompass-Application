@@ -1,16 +1,19 @@
 import axios from 'axios';
-import { GET_PROJECTS, ADD_PROJECT } from './actions';
+import { SET_PROJECTS, ADD_PROJECT, Set_Projects, SET_CURRENT_PROJECT, Set_Current_Project} from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const INITIAL_STATE = {
+  currentProject: {},
   items: [],
 };
 
 export const projectReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case GET_PROJECTS:
+    case SET_CURRENT_PROJECT:
+      return {...state, currentProject: action.payload}
+    case SET_PROJECTS:
       return {...state, items: action.payload}
     case ADD_PROJECT:
       state.items.push(action.payload)
@@ -20,34 +23,38 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
   }
 };
 
-// export const getProjects = (data) => (dispatch, getState) => {
-//   (async () => {
-//     try {
-//       const user = await AsyncStorage.getItem('currentLoggedUser')
-//       const currentLoggedUser = JSON.parse(user);
-//       if(currentLoggedUser !== null) {
-        
-//         axios.get(API_URL + `/v1/projects/` + data,{
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-//           }
-//         })
-//         .then(
-//           response => {
-//             const {data} = response;
-//             dispatch(Get_Projects(data));
-//           },
-//           err => {
-//           }
-//         );
-//       }
-//     } catch(e) {
-//       // error reading value
-//       console.log(e)
-//     }
-//   })().catch(e => console.log("Caught: " + e));
-//}
+export const getProjects = (userId) => (dispatch, getState) => {
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      if(userId) {
+        axios.get(API_URL + `/v1/users/` + userId + `/projects`,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            const {data} = response;
+            dispatch(Set_Projects(data));
+            if (data!= null && data.length > 0){
+              dispatch(Set_Current_Project(data[0]));
+            }
+            
+          },
+          err => {
+            console.log(err)
+          }
+        );
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
 
 export const createProject = (data) => (dispatch, getState) => {
   (async () => {
