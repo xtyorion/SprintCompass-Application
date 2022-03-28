@@ -31,7 +31,7 @@ const initialData = [...Array(NUM_ITEMS)].fill(0).map((d, index) => {
   };
 });
 
-const BoardSwipeableScreen = () => {
+const BoardScreen = () => {
   const [data, setData] = useState(initialData);
   const itemRefs = useRef(new Map());
 
@@ -52,4 +52,4 @@ const BoardSwipeableScreen = () => {
   );
 }
 
-export default BoardSwipeableScreen;
+export default BoardScreen;
