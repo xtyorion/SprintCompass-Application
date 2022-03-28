@@ -137,12 +137,12 @@ const UserHomeNavigatorScreen = props => {
             <Ionicons name={focused ? "time" : "time-outline"} color={'#826cff'} size={size} />
           )
         }}/>
-        <Tab.Screen name="List" component={SubtasksScreen} options={{
+        <Tab.Screen name="List" component={TeamListScreen} options={{
           tabBarIcon: ({focused, size}) => (
             <Ionicons name={focused ? "list" : "list-outline"} color={'#826cff'} size={size} />
           ),
         }}/>
-        <Tab.Screen name="Profile" component={TeamListScreen} options={{
+        <Tab.Screen name="Profile" component={ProfileScreen} options={{
           tabBarIcon: ({focused, size}) => (
             <FontAwesome name={focused ? "user" : "user-o"} color={'#826cff'} size={size} />
           )
