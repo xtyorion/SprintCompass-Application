@@ -6,7 +6,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Button, Headline, Provider, Menu, Divider } from 'react-native-paper';
+import { Button, Headline, Provider, Menu, Divider, Text} from 'react-native-paper';
 
 import { getProjects } from '../store/ProjectReducer';
 import { connect } from 'react-redux';
@@ -131,6 +131,11 @@ const UserHomeNavigatorScreen = props => {
               <Divider />
               <Menu.Item onPress={() => {console.log('todo')}} title="New Sprint" />
             </Menu>
+            </View>
+          ),
+          headerRight: () => (
+            <View>
+              <Text>Add Task</Text>
             </View>
           ),
           tabBarIcon: ({focused, size}) => (

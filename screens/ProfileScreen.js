@@ -29,7 +29,7 @@ const ProfileScreen = (props) => {
   return (
     <Background>
       <Logo />
-      <Headline>Profile - {props.Login.current.name}</Headline>
+      <Headline>Profile - {props.User.currentUser.name}</Headline>
 
       <Button style={styles.button} mode="contained" onPress={_onLogoutPressed}>
         Logout 
@@ -39,8 +39,8 @@ const ProfileScreen = (props) => {
   );
 }
 const mapStateToProps = (state) => {
-  const { Login } = state
-  return { Login }
+  const { User } = state
+  return { User }
 };
 
 export default connect(mapStateToProps)(ProfileScreen);
