@@ -13,6 +13,8 @@ import GuestHomeScreen from '../screens/GuestHomeScreen';
 import UserHomeNavigatorScreen from './UserHomeNavigatorScreen';
 import UserHomeScreen from '../screens/UserHomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import TeamListScreen from '../screens/TeamListScreen';
+import SubtasksScreen from '../screens/SubtasksScreen';
 
 const Stack = createStackNavigator();
 
@@ -75,20 +77,20 @@ function AppNavigator() {
                         title: '',
                     }}
                 />
-                {/* <Stack.Screen
-                    name="TimeListScreen"
-                    component={TimeListScreen}
+                { <Stack.Screen
+                    name="TeamListScreen"
+                    component={TeamListScreen}
                     options={{
                         title: '',
                     }}
-                /> */}
-                {/* <Stack.Screen
-                    name="MessengerStackScreen"
-                    component={MessengerStackScreen}
+                /> }
+                { <Stack.Screen
+                    name="SubtasksScreen"
+                    component={SubtasksScreen}
                     options={{
                         title: '',
                     }}
-                /> */}
+                /> }
                 <Stack.Screen
                     name="UserHomeNavigatorScreen"
                     component={UserHomeNavigatorScreen}
