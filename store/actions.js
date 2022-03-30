@@ -6,6 +6,9 @@ export const SET_CURRENT_PROJECT = "SET_CURRENT_PROJECT";
 export const SET_LOGS = "SET_LOGS";
 export const SET_CURRENT_LOG = "SET_CURRENT_LOG";
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const SET_TASKS = "SET_TASKS";
+export const UPDATE_TASKS_BY_STATUS = "UPDATE_TASKS_BY_STATUS";
+export const SET_CURRENT_TASK = "SET_CURRENT_TASK";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -31,11 +34,24 @@ export const Set_Logs = (logs) => ({
   type: SET_LOGS,
   payload: logs
 })
-export const Set_Current = (log) => ({
+export const Set_Current_Log = (log) => ({
   type: SET_CURRENT_LOG,
   payload: log
 })
 export const Set_Current_User = (user) => ({
   type: SET_CURRENT_USER,
   payload: user
+})
+
+export const Set_Tasks = (tasks) => ({
+  type: SET_TASKS,
+  payload: tasks
+})
+export const Update_Tasks_By_Status = (tasks) => ({
+  type: UPDATE_TASKS_BY_STATUS,
+  payload: tasks
+})
+export const Set_Current_Task = (task) => ({
+  type: SET_CURRENT_TASK,
+  payload: task
 })

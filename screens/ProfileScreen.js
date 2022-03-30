@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 
 const ProfileScreen = (props) => {
   React.useLayoutEffect(() => {
-    console.log("conole", props);
   }, []);
   const _onLogoutPressed = () => {
     props.dispatch(

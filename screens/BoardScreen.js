@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   View,
   Platform,
@@ -6,50 +6,45 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 import DraggableFlatList from "react-native-draggable-flatlist";
-import StoryItem from "../components/StoryItem";
+import TaskItem from "../components/TaskItem";
 const { multiply, sub } = Animated;
+import {updateTasks} from '../store/TaskReducer';
+import { connect } from 'react-redux';
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-const NUM_ITEMS = 20;
-
-function getColor(i) {
-  const multiplier = 255 / (NUM_ITEMS - 1);
-  const colorVal = i * multiplier;
-  return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-}
-
-const initialData = [...Array(NUM_ITEMS)].fill(0).map((d, index) => {
-  const backgroundColor = getColor(index);
-  return {
-    text: `row ${index}d`,
-    key: `key-${backgroundColor}`,
-    backgroundColor,
-    height: 100,
-  };
-});
-
-const BoardScreen = () => {
-  const [data, setData] = useState(initialData);
+const BoardScreen = (props) => {
   const itemRefs = useRef(new Map());
 
   const renderItem = useCallback((params) => {
-    return <StoryItem {...params} itemRefs={itemRefs} />;
+    return <TaskItem {...params} itemRefs={itemRefs} {...props}/>;
   }, []);
+
+  const updateTaskItemListOrder = (data) => {
+    const newArray = data.map((task, index) => {
+      task.priorityNumber = index+1;
+      return task;
+    });
+    props.dispatch(updateTasks(newArray))
+  }
 
   return (
     <View style={{height: 620}}>
       <DraggableFlatList
-        keyExtractor={(item) => item.key}
-        data={data}
+        keyExtractor={(item) => item.id}
+        data={props.items ?? []}
         renderItem={renderItem}
-        onDragEnd={({ data }) => setData(data)}
+        onDragEnd={({ data }) => updateTaskItemListOrder(data)}
         activationDistance={20}
       />
     </View>
   );
 }
+const mapStateToProps = (state) => {
+  const { Task } = state
+  return { Task }
+};
 
-export default BoardScreen;
+export default connect(mapStateToProps)(BoardScreen);

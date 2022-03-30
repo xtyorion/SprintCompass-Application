@@ -9,12 +9,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Button, Headline, Provider, Menu, Divider, Text} from 'react-native-paper';
 
 import { getProjects } from '../store/ProjectReducer';
+import { setCurrentLog } from '../store/LogReducer';
+import {setCurrentTask} from '../store/TaskReducer';
 import { connect } from 'react-redux';
-
-import {styles} from '../styles/styles';
-import BoardNavigator from './BoardNavigator';
 import TeamListScreen from '../screens/TeamListScreen';
-import SubtaskScreen from '../screens/TeamListScreen';
+import BoardStackScreen from '../stacks/BoardStackScreen';
 
 
 
@@ -31,7 +30,11 @@ const UserHomeNavigatorScreen = props => {
   const closeProjectMenu = () => setVisibleProjectMenu(false);
   const openLogMenu = () => setVisibleLogMenu(true);
   const closeLogMenu = () => setVisibleLogMenu(false);
+  
 
+  const [isBoardHeaderView, setIsBoardHeaderView] = useState(true);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   useEffect(()=>{
     props.dispatch(getProjects(props.User.currentUser.id));
@@ -50,10 +53,31 @@ const UserHomeNavigatorScreen = props => {
   useEffect(() => {
     const tempArray =[];
     for (var log of props.Log.items) {
-      tempArray.push(<Menu.Item key={log.id} onPress={() => {}} title={log.name}/>);
+      tempArray.push(<Menu.Item key={log.id} onPress={() => setLogToCurrent(log)} title={log.name}/>);
     }
     setLogItems(tempArray);
   }, [props.Log.items]);
+  
+  useEffect(() => {
+    if(Object.keys(props.Log.currentLog).length !== 0){
+      setLogTitle(props.Log.currentLog.name)
+    }
+  }, [props.Log.currentLog.name]);
+
+  const gotoAddTask = () => {
+    props.dispatch(setCurrentTask({}));
+    props.navigation.navigate('TaskScreen');
+  }
+
+  const boardHeaderView = (isVisible) => {
+    setIsBoardHeaderView(isVisible);
+  }
+
+  const setLogToCurrent = (log) => {
+    props.dispatch(setCurrentLog(log))
+  }
+
+
 
   const Tab = createBottomTabNavigator();
 
@@ -81,7 +105,7 @@ const UserHomeNavigatorScreen = props => {
             ></ImageBackground>
           ),
         }}>
-        <Tab.Screen name="UserHomeStackScreen" component={UserHomeStackScreen} options={{
+        <Tab.Screen name="UserHomeStackScreen" component={UserHomeStackScreen}   options={{
           title: "",
           tabBarIcon: ({focused, size }) => (
             <Ionicons name={focused ? "home" : "home-outline"} color={'#826cff'} size={size} />
@@ -110,9 +134,12 @@ const UserHomeNavigatorScreen = props => {
             </View>
           )
         }}/>
-        <Tab.Screen name="BoardListScreen" component={BoardNavigator} options={{
+        <Tab.Screen name="BoardStackScreen" 
+          children={()=><BoardStackScreen boardHeaderView={boardHeaderView} {...props}/>}
+          options={{
           title:"",
           headerLeft: () => (
+          ( isBoardHeaderView &&
           <View
             style={{
               position: 'relative',
@@ -131,12 +158,15 @@ const UserHomeNavigatorScreen = props => {
               <Divider />
               <Menu.Item onPress={() => {console.log('todo')}} title="New Sprint" />
             </Menu>
-            </View>
+          </View>
+          )
           ),
           headerRight: () => (
+            ( isBoardHeaderView &&
             <View>
-              <Text>Add Task</Text>
+              <Button mode="contained" style={{marginRight:15, paddingVertical: -1}} onPress={gotoAddTask}>Add Task</Button>
             </View>
+            )
           ),
           tabBarIcon: ({focused, size}) => (
             <Ionicons name={focused ? "time" : "time-outline"} color={'#826cff'} size={size} />

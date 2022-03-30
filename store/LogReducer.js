@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Set_Logs, SET_LOGS, Set_Current_Log, SET_CURRENT_LOG } from './actions';
+import { Set_Logs, SET_LOGS, Set_Current_Log, SET_CURRENT_LOG,} from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -82,6 +82,10 @@ export const createLog = (data) => (dispatch, getState) => {
       console.log(e)
     }
   })().catch(e => console.log("Caught: " + e));
+}
+
+export const setCurrentLog = (data) => (dispatch, getState) => {
+  dispatch(Set_Current_Log(data));
 }
 
 

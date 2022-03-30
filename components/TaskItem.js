@@ -1,6 +1,5 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import {
-  Text,
   View,
   StyleSheet,
   FlatList,
@@ -17,6 +16,11 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator,
 } from "react-native-draggable-flatlist";
+import {setCurrentTask} from '../store/TaskReducer';
+import { Modal, Portal, Text, Button, Provider, Headline } from 'react-native-paper';
+import {updateTask} from '../store/TaskReducer'
+
+
 const { multiply, sub } = Animated;
 
 if (Platform.OS === "android") {
@@ -26,7 +30,15 @@ if (Platform.OS === "android") {
 const OVERSWIPE_DIST = 20;
 
 
-const StoryItem = ({ item, itemRefs, drag }) => {
+const TaskItem = (props) => {
+  const { item, itemRefs, drag, navigation } = props;
+
+ 
+
+  const editTaskItem = () => {
+    props.dispatch(setCurrentTask(item));
+    navigation.navigate('TaskDetailScreen');
+  }
   return (
     <ScaleDecorator>
       <SwipeableItem
@@ -47,7 +59,7 @@ const StoryItem = ({ item, itemRefs, drag }) => {
         }}
         overSwipe={OVERSWIPE_DIST}
         renderUnderlayLeft={() => <UnderlayLeft drag={drag} />}
-        renderUnderlayRight={() => <UnderlayRight />}
+        renderUnderlayRight={() => <UnderlayRight item={item} {...props} />}
         snapPointsLeft={[50, 150, 175]}
         snapPointsRight={[175]}
       >
@@ -56,10 +68,11 @@ const StoryItem = ({ item, itemRefs, drag }) => {
             styles.row,
           ]}
         >
-          <TouchableOpacity style={{width:'90%', borderRadius: 5,paddingHorizontal: 10,elevation: 2, paddingVertical:10, backgroundColor: "white"}} onPressIn={drag} onPress={()=>{console.log("pressed: todo modal")}}>
-            <Text>[Team Member]</Text>
-            <Text style={styles.text}>{item.text}</Text>
-            <Text>Description ...</Text>
+          <TouchableOpacity style={{width:'90%', borderRadius: 5,paddingHorizontal: 10,elevation: 2, paddingVertical:10, backgroundColor: "white"}} 
+            onPressIn={drag} onPress={editTaskItem}>
+            <Text>[Priority: {item.priorityNumber} ]</Text>
+            <Text style={styles.text}>{item.name}</Text>
+            <Text>{item.description}</Text>
             <View style={{flexDirection: 'row'}}>
               <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
               <Text style={{width: '50%', textAlign: 'right' }}>Number of Subtasks: 4</Text>
@@ -91,18 +104,61 @@ const UnderlayLeft = ({ drag }) => {
   );
 };
 
-function UnderlayRight() {
+function UnderlayRight(props) {
+  const {item} = props;
+  const [visible, setVisible] = React.useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {backgroundColor: 'white', padding: 20};
+
+  const statuses = [
+    {
+      label: 'Open',
+      value: 1,
+    },
+    {
+      label: 'Development',
+      value: 2,
+    },
+    {
+      label: 'Testing',
+      value: 3,
+    },
+    {
+      label: 'Closed',
+      value: 4,
+    },
+  ]
+  const updateStatus = (statusId) => {
+    props.dispatch(updateTask(item.id, {statusId: statusId}))
+  }
+
   const { close } = useSwipeableItemParams();
   return (
     <Animated.View style={[styles.row, styles.underlayRight]}>
-      <TouchableOpacity onPressOut={close}>
+      <TouchableOpacity onPressOut={showModal}>
+        <Portal>
+          <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+            <Headline>Select status change: </Headline>
+            { 
+            statuses.map((status) => {
+              if(status.value !== item.statusId)
+                return (
+                  <Button mode="contained" key={status.value} onPress={() => updateStatus(status.value)} style={{margin: 5}}>{status.label}</Button>
+                );
+              }
+            )
+            }
+          </Modal>
+        </Portal>
         <Text style={styles.text}>Change Status</Text>
       </TouchableOpacity>
     </Animated.View>
   );
 }
 
-export default StoryItem
+export default TaskItem
 
 const styles = StyleSheet.create({
   container: {
@@ -118,7 +174,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     color: "#282a36",
-    fontSize: 32,
+    fontSize: 15,
   },
   underlayRight: {
     flex: 1,

@@ -84,13 +84,13 @@ function AppNavigator() {
                         title: '',
                     }}
                 /> }
-                { <Stack.Screen
+                {/* { <Stack.Screen
                     name="SubtasksScreen"
                     component={SubtasksScreen}
                     options={{
                         title: '',
                     }}
-                /> }
+                /> } */}
                 <Stack.Screen
                     name="UserHomeNavigatorScreen"
                     component={UserHomeNavigatorScreen}

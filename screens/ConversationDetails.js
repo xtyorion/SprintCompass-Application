@@ -34,18 +34,7 @@ const MessagesScreen = (props) => {
   },[props.Message.items]);
 
   useEffect(() => {
-
     props.dispatch(getMessages(props.Conversation.currentConversation.id));
-    // socket.current = io(API_URL);
-    // socket.current.emit("addUser", props.Login.current);
-    // socket.current.on("getMessage", data =>{
-    //   setArrivalMessage({
-    //     id: Date.now(),
-    //     senderId: data.senderId,
-    //     message: data.message,
-    //     createdAt: Date.now(),
-    //   });
-    // });
   },[]);
   useEffect(() => {
     if(arrivalMessage && props.Conversation.currentConversation.sender.id === arrivalMessage.senderId?.id){
