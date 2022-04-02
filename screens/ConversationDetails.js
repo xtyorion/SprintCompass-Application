@@ -24,11 +24,6 @@ const MessagesScreen = (props) => {
     <Text style={{borderWidth: 2, top: 500}}>{chatMessage}</Text>
   ));
 
-  const gotoMessages = (conversation) => {
-    // props.dispatch(Set_Conversation(conversation));
-    // props.navigation.navigate('ConversationDetails');
-  }
-
   useEffect(() => {
     console.log("watch for message items change")
   },[props.Message.items]);
