@@ -66,7 +66,7 @@ const UserHomeNavigatorScreen = props => {
 
   const gotoAddTask = () => {
     props.dispatch(setCurrentTask({}));
-    props.navigation.navigate('TaskScreen');
+    props.navigation.navigate('TaskDetailScreen');
   }
 
   const boardHeaderView = (isVisible) => {
