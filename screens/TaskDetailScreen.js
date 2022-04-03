@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity,SafeAreaView, StyleSheet } from 'react-native';
+import { View, TouchableOpacity,SafeAreaView, StyleSheet, ScrollView, StatusBar } from 'react-native';
 import { Button, Headline, Text, Menu, Divider } from 'react-native-paper';
 import Background from '../components/Background';
 import TextInput from '../components/TextInput';
 import { connect } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {styles} from '../styles/styles'
 import {createTask} from '../store/TaskReducer'
 
 
@@ -71,7 +70,7 @@ const TaskDetailScreen = (props) => {
   },[props.Task.currentTask]);
 
   useEffect(()=> {
-    console.log(task.id)
+    console.log("check", task.id)
     if (task.id !== undefined){
       const logItem = props.Log.items.find(log => log.id === task.id)
       updateLog(logItem);
@@ -94,85 +93,107 @@ const TaskDetailScreen = (props) => {
     setTask({...task, statusId: statuses[index].value});
   }
   const updateLog = (log) => {
-    setLogLabel(log.name);
-    setTask({...task, logId: log.id});
+    if (log) {
+      setLogLabel(log.name);
+      setTask({...task, logId: log.id});
+    }
+   
     
   }
 
   return (
     <Background>
-      <Headline style={{ marginTop: -100 }}>{title}</Headline>
-      
-      <TextInput
-        label="Name"
-        returnKeyType="next"
-        value={task.name}
-        onChangeText={text => setTask({ ...task, name: text })}
-        autoCapitalize="none"
-        autoCompleteType="name"
-        textContentType="name"
-        keyboardType="default"
-      />
-      
-      <TextInput
-        label="Description"
-        returnKeyType="next"
-        value={task.description}
-        onChangeText={text => setTask({ ...task, description: text })}
-        autoCapitalize="none"
-        autoCompleteType="name"
-        textContentType="name"
-        keyboardType="default"
-      />
-      
-      <TextInput
-        label="Initial Relative Estimate"
-        returnKeyType="next"
-        value={task.initialRelativeEstimate?.toString()}
-        onChangeText={text => setTask({ ...task, initialRelativeEstimate: parseInt(text) })}
-        keyboardType="numeric"
-      />
-      
-      <TextInput
-        label="Create a Subtask"
-        returnKeyType="next"
-        value={task.initialEstimatedCost?.toString()}
-        onChangeText={text => setTask({ ...task, initialEstimatedCost: parseInt(text) })}
-        keyboardType="numeric"
-      />
-       <View
-        style={{
-          flexDirection: 'row',
-        }}>
-        <Menu
-          visible={visibleStatusMenu}
-          onDismiss={closeStatusMenu}
-          style={{left: 55, top: 560}}
-          anchor={
-            <Button onPress={openStatusMenu} mode="outlined"  style={{ backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
-              {statusLabel}
-              <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
-            </Button>
-            }>
-          <Menu.Item onPress={() => {updateStatus(0)}} title={statuses[0].label} />
-          <Menu.Item onPress={() => {updateStatus(1)}} title={statuses[1].label} />
-          <Menu.Item onPress={() => {updateStatus(2)}} title={statuses[2].label} />
-        </Menu>
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+        <TextInput
+          label="Name"
+          returnKeyType="next"
+          value={task.name}
+          onChangeText={text => setTask({ ...task, name: text })}
+          autoCapitalize="none"
+          autoCompleteType="name"
+          textContentType="name"
+          keyboardType="default"
+        />
         <Menu
           visible={visibleLogMenu}
           onDismiss={closeLogMenu}
-          style={{left: 205, top: 560}}
+          style={{left: 205, top: 230}}
           anchor={
-            <Button onPress={openLogMenu} mode="outlined" style={{ marginLeft: 35, backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+            <Button onPress={openLogMenu} mode="outlined" style={{backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
               {logLabel}
-              <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
+              <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, right:5}}/>
             </Button>
             }>
           {props.Log.items.map(item => (
             <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name}/>
           ))}
         </Menu>
-      </View>
+        <TextInput
+          label="Description"
+          returnKeyType="next"
+          value={task.description}
+          onChangeText={text => setTask({ ...task, description: text })}
+          autoCapitalize="none"
+          autoCompleteType="name"
+          textContentType="name"
+          keyboardType="default"
+          multiline={true}
+          numberOfLines={4}
+          dense={true}
+        />
+        
+        <TextInput
+          label="Initial Relative Estimate"
+          returnKeyType="next"
+          value={task.initialRelativeEstimate?.toString()}
+          onChangeText={text => setTask({ ...task, initialRelativeEstimate: parseInt(text) })}
+          keyboardType="numeric"
+        />
+        
+        <TextInput
+          label="Create a Subtask"
+          returnKeyType="next"
+          value={task.initialEstimatedCost?.toString()}
+          onChangeText={text => setTask({ ...task, initialEstimatedCost: parseInt(text) })}
+          keyboardType="numeric"
+        />
+        <View
+          style={{
+            flexDirection: 'row',
+          }}>
+          <Menu
+            visible={visibleStatusMenu}
+            onDismiss={closeStatusMenu}
+            style={{left: 55, top: 560}}
+            anchor={
+              <Button onPress={openStatusMenu} mode="outlined"  style={{ backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+                {statusLabel}
+                <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
+              </Button>
+              }>
+            <Menu.Item onPress={() => {updateStatus(0)}} title={statuses[0].label} />
+            <Menu.Item onPress={() => {updateStatus(1)}} title={statuses[1].label} />
+            <Menu.Item onPress={() => {updateStatus(2)}} title={statuses[2].label} />
+          </Menu>
+          <Menu
+            visible={visibleLogMenu}
+            onDismiss={closeLogMenu}
+            style={{left: 205, top: 560}}
+            anchor={
+              <Button onPress={openLogMenu} mode="outlined" style={{ marginLeft: 3, backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+                {logLabel}
+                <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
+              </Button>
+              }>
+            {props.Log.items.map(item => (
+              <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name}/>
+            ))}
+          </Menu>
+        </View>
+        
+        </ScrollView>
+      </SafeAreaView>
       <Button style={styles.button} mode="contained" onPress={handleTasksCreation}>
         {buttonTitle}
       </Button>
@@ -180,6 +201,8 @@ const TaskDetailScreen = (props) => {
         Back
       </Button>
     </Background>
+    
+
   );
 }
 const mapStateToProps = (state) => {
@@ -187,5 +210,20 @@ const mapStateToProps = (state) => {
   return { Task, Log }
 };
 
+const styles = StyleSheet.create({
+  container: {
+    height: 540,
+    marginTop: -100
+  },
+  scrollView: {
+  },
+  text: {
+    fontSize: 42,
+  },
+  button: {
+    width: '100%',
+    marginVertical: 10,
+},
+});
 
 export default connect(mapStateToProps)(TaskDetailScreen);

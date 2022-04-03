@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BoardNavigator from '../navigation/BoardNavigator';
 import SubtasksScreen from '../screens/SubtasksScreen';
-import TaskDetailScreen from '../screens/TaskDetailScreen';
-import {useEffect} from 'react';
+// import TaskDetailScreen from '../screens/TaskDetailScreen';
+import TaskNavigator from '../navigation/TaskNavigator';
 
 const BoardStack = createNativeStackNavigator();
 
@@ -14,8 +14,8 @@ const BoardStackScreen = (props) => {
       initialRouteName="BoardNavigator"
       >
       <BoardStack.Screen name="BoardNavigator" component={BoardNavigator} />
-      <BoardStack.Screen name="TaskDetailScreen" 
-      children={()=><TaskDetailScreen boardHeaderView={props.boardHeaderView}  {...props} />}/>
+      <BoardStack.Screen name="TaskNavigator" 
+      children={()=><TaskNavigator boardHeaderView={props.boardHeaderView}  {...props} />}/>
       <BoardStack.Screen name="SubtasksScreen" component={SubtasksScreen} />
     </BoardStack.Navigator>
   );

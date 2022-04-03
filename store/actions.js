@@ -9,6 +9,7 @@ export const SET_CURRENT_USER = "SET_CURRENT_USER";
 export const SET_TASKS = "SET_TASKS";
 export const UPDATE_TASKS_BY_STATUS = "UPDATE_TASKS_BY_STATUS";
 export const SET_CURRENT_TASK = "SET_CURRENT_TASK";
+export const SET_SUBTASKS = "SET_SUBTASKS";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -54,4 +55,8 @@ export const Update_Tasks_By_Status = (tasks) => ({
 export const Set_Current_Task = (task) => ({
   type: SET_CURRENT_TASK,
   payload: task
+})
+export const Set_Subtasks = (subtasks) => ({
+  type: SET_SUBTASKS,
+  payload: subtasks
 })

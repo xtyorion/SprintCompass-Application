@@ -5,28 +5,30 @@ import {primary10} from '../styles/styles';
 import {getLogs, setCurrentLog} from '../store/LogReducer';
 import {getTasks} from '../store/TaskReducer';
 import { connect } from 'react-redux';
+import TaskDetailScreen from '../screens/TaskDetailScreen';
+import SubTaskListScreen from '../screens/SubTaskListScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
-const BoardNavigator = (props) => {
+const TaskNavigator = (props) => {
 
-  useEffect(()=>{
-    props.dispatch(getLogs(props.Project.currentProject.id));
-  },[]);
+  // useEffect(()=>{
+  //   props.dispatch(getLogs(props.Project.currentProject.id));
+  // },[]);
 
-  useEffect(()=>{
-    if (Object.keys(props.Log.currentLog).length === 0 && props.Log.items.length > 0){
-      props.dispatch(setCurrentLog(props.Log.items[0]))
-    }
-  },[props.Log.items]);
+  // useEffect(()=>{
+  //   if (Object.keys(props.Log.currentLog).length === 0 && props.Log.items.length > 0){
+  //     props.dispatch(setCurrentLog(props.Log.items[0]))
+  //   }
+  // },[props.Log.items]);
 
-  useEffect(() => {
-    props.dispatch(getTasks(props.Log.currentLog.id))
-  }, [props.Log.currentLog]);
+  // useEffect(() => {
+  //   props.dispatch(getTasks(props.Log.currentLog.id))
+  // }, [props.Log.currentLog]);
 
-  useEffect(() => {
-    props.dispatch(getTasks(props.Log.currentLog.id))
-  }, [props.Task.currentTask]);
+  // useEffect(() => {
+  //   props.dispatch(getTasks(props.Log.currentLog.id))
+  // }, [props.Task.currentTask]);
 
   return (
     <Tab.Navigator 
@@ -48,10 +50,8 @@ const BoardNavigator = (props) => {
         ></ImageBackground>
       ),
     }}>
-      <Tab.Screen name="Open" children={()=><BoardScreen items={props.Task.items[1]} {...props}/>} />
-      <Tab.Screen name="Dev" children={()=><BoardScreen items={props.Task.items[2]} {...props}/>} />
-      <Tab.Screen name="Testing" children={()=><BoardScreen items={props.Task.items[3]} {...props}/>} />
-      <Tab.Screen name="Closed" children={()=><BoardScreen items={props.Task.items[4]} {...props}/>} />
+      <Tab.Screen name="Task Details" children={()=><TaskDetailScreen items={props.Task.items[1]} {...props}/>} />
+      <Tab.Screen name="Sub Tasks" children={()=><SubTaskListScreen items={props.Task.items[2]} {...props}/>} />
     </Tab.Navigator>
   );
 }
@@ -60,4 +60,4 @@ const mapStateToProps = (state) => {
   return { Project, Log, Task }
 };
 
-export default connect(mapStateToProps)(BoardNavigator);
+export default connect(mapStateToProps)(TaskNavigator);

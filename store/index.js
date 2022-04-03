@@ -7,6 +7,7 @@ import MessageReducer from "./MessageReducer"
 import ProjectReducer from "./ProjectReducer"
 import LogReducer from "./LogReducer"
 import TaskReducer from "./TaskReducer"
+import SubtaskReducer from "./SubtaskReducer"
 
 import thunk from "redux-thunk";
 
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   Project: ProjectReducer,
   Log: LogReducer,
   Task: TaskReducer,
+  Subtask: SubtaskReducer,
 });
 
 export default createStore(rootReducer, applyMiddleware(thunk))

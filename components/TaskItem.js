@@ -37,7 +37,7 @@ const TaskItem = (props) => {
 
   const editTaskItem = () => {
     props.dispatch(setCurrentTask(item));
-    navigation.navigate('TaskDetailScreen');
+    navigation.navigate('TaskNavigator');
   }
   return (
     <ScaleDecorator>

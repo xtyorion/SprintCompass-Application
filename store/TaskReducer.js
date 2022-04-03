@@ -9,7 +9,7 @@ const INITIAL_STATE = {
   currentTask: {}
 };
 
-export const logReducer = (state = INITIAL_STATE, action) => {
+export const taskReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case SET_TASKS:
       return {...state, items: action.payload}
@@ -153,4 +153,4 @@ export const setCurrentTask = (data) => (dispatch, getState) => {
 }
 
 
-export default logReducer;
+export default taskReducer;
