@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { Button, Headline,  Provider, FlatList, Menu, Divider } from 'react-native-paper';
 import { View, Text } from 'react-native';
 import Background from '../components/Background';
@@ -11,6 +11,7 @@ import ContactItemInput from '../screens/ListofMembersScreen';
 const MembersScreen = (props) => {
     const [ContactList, setContactList] = useState([]);
     const [isAddMode, setIsAddMode] = useState(false);
+    const flatList = useRef(null);
   
   
     const addContactItemHandler = (ContactItem) => {
@@ -26,25 +27,13 @@ const MembersScreen = (props) => {
       );
     }
   
+    //put flatlist here of team member with email 
 
   return (
     <Background>
       <View style={styles.container}>
       <Headline>Members Screen</Headline>
       <Logo />
-      <ContactItemInput visible={isAddMode} onCancel={() => setIsAddMode(false)} onAddItem={addContactItemHandler} />
-      <FlatList
-        data={ContactList}
-        renderItem={
-          itemData => (
-            <ContactListItem
-              id={itemData.item.key}
-              onDelete={removeContactItemHandler}
-              item={itemData.item.value}
-            />
-          )
-        }
-      />
       </View>
     </Background>
   );
