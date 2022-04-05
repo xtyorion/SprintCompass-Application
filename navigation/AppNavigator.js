@@ -15,6 +15,8 @@ import UserHomeScreen from '../screens/UserHomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import TeamListScreen from '../screens/TeamListScreen';
 import SubtasksScreen from '../screens/SubtasksScreen';
+import ListofMembersScreen from '../screens/ListofMembersScreen';
+import MembersScreen from '../screens/MembersScreen';
 
 const Stack = createStackNavigator();
 
@@ -105,6 +107,20 @@ function AppNavigator() {
                         title: '',
                     }}
                 />  */}
+                        <Stack.Screen
+                    name="ListofMembersScreen"
+                    component={ListofMembersScreen}
+                    options={{
+                        title: '',
+                    }}
+                />
+                     <Stack.Screen
+                    name="MembersScreen"
+                    component={MembersScreen}
+                    options={{
+                        title: '',
+                    }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );
