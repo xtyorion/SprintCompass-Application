@@ -152,7 +152,7 @@ function UnderlayRight(props) {
             }
           </Modal>
         </Portal>
-        <Text style={styles.text}>Change Status</Text>
+        <Text style={styles.text}>Copy to other Log/Sprint</Text>
       </TouchableOpacity>
     </Animated.View>
   );
