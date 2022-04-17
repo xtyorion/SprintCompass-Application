@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Set_Subtasks, SET_SUBTASKS, SET_CURRENT_SUBTASK, UPDATE_SUBTASKS_BY_STATUS } from './actions';
+import { Set_Subtasks, SET_SUBTASKS, SET_CURRENT_SUBTASK, UPDATE_SUBTASKS_BY_STATUS, Set_Current_Subtask } from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -38,10 +38,38 @@ export const getSubtasks = (taskId) => (dispatch, getState) => {
         .then(
           response => {
             const {data} = response;
-            console.log("subtasks", data);
             dispatch(Set_Subtasks(data));
           },
           err => {
+          }
+        );
+      } else {
+        dispatch(Set_Subtasks([]));
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
+export const createSubtask = (data) => (dispatch, getState) => {
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      if(currentLoggedUser !== null) {
+        axios.post(API_URL + `/v1/subtasks/`, data,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            dispatch(Set_Current_Subtask(response.data));
+          },
+          err => {
+            console.log(err)
           }
         );
       }
@@ -51,107 +79,35 @@ export const getSubtasks = (taskId) => (dispatch, getState) => {
     }
   })().catch(e => console.log("Caught: " + e));
 }
-
-// export const updateSubtasks = (tasks) => (dispatch, getState) => {
-//   (async () => {
-//     try {
-//       const user = await AsyncStorage.getItem('currentLoggedUser')
-//       const currentLoggedUser = JSON.parse(user);
-//       const userId = currentLoggedUser.user.id;
-//       if(currentLoggedUser !== null) {
-//         axios.post(API_URL + `/v1/tasks/updateMultipleSubtasks`, tasks,{
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-//           }
-//         })
-//         .then(
-//           response => {
-//             console.log("newdata", response.data)
-//             dispatch(Update_Subtasks_By_Status(response.data))
-//           },
-//           err => {
-//             console.log(err)
-//           }
-//         );
-//       }
-//     } catch(e) {
-//       // error reading value
-//       console.log(e)
-//     }
-//   })().catch(e => console.log("Caught: " + e));
-// }
-
-// export const updateSubtask = (taskId, data) => (dispatch, getState) => {
-//   (async () => {
-//     try {
-//       const user = await AsyncStorage.getItem('currentLoggedUser')
-//       const currentLoggedUser = JSON.parse(user);
-//       const userId = currentLoggedUser.user.id;
-//       if(currentLoggedUser !== null) {
-//         axios.put(API_URL + `/v1/tasks/` + taskId, data,{
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-//           }
-//         })
-//         .then(
-//           response => {
-//             console.log("newdata", response.data)
-//             dispatch(Set_Current_Subtask(response.data))
-//           },
-//           err => {
-//             console.log(err)
-//           }
-//         );
-//       }
-//     } catch(e) {
-//       // error reading value
-//       console.log(e)
-//     }
-//   })().catch(e => console.log("Caught: " + e));
-// }
-
-// export const createSubtask = (data) => (dispatch, getState) => {
-//   (async () => {
-//     try {
-//       const user = await AsyncStorage.getItem('currentLoggedUser')
-//       const currentLoggedUser = JSON.parse(user);
-//       if(currentLoggedUser !== null) {
-//         axios.post(API_URL + `/v1/tasks/`, data,{
-//           headers: {
-//             'Content-Type': 'application/json',
-//             'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
-//           }
-//         })
-//         .then(
-//           response => {
-//             dispatch(Set_Current_Subtask(response.data));
-//           },
-//           err => {
-//             console.log(err)
-//           }
-//         );
-//       }
-//     } catch(e) {
-//       // error reading value
-//       console.log(e)
-//     }
-//   })().catch(e => console.log("Caught: " + e));
-// }
-
-// const formatSubtasksByStatus = (items, key) => {
-//   return items.reduce((group, task) => {
-//     const { statusId } = task;
-//     group[statusId] = group[statusId] ?? [];
-//     group[statusId].push(task);
-//     return group;
-//   }, {});
-// }
-
-// export const setCurrentSubtask = (data) => (dispatch, getState) => {
-//   dispatch(Set_Current_Subtask(data));
-// }
-
+export const updateSubtask = (subtaskId, data) => (dispatch, getState) => {
+  (async () => {
+    try {
+      console.log(data)
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      const userId = currentLoggedUser.user.id;
+      if(currentLoggedUser !== null) {
+        axios.put(API_URL + `/v1/subtasks/` + subtaskId, data,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            console.log("newdata", response.data)
+            dispatch(Set_Current_Subtask(response.data))
+          },
+          err => {
+            console.log(err)
+          }
+        );
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
 
 export default logReducer;

@@ -6,14 +6,15 @@ import ProfileScreen from '../screens/ProfileScreen';
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Button, Headline, Provider, Menu, Divider, Text} from 'react-native-paper';
+import { Button, Portal, Dialog, Menu, Divider} from 'react-native-paper';
 
-import { getProjects } from '../store/ProjectReducer';
-import { setCurrentLog } from '../store/LogReducer';
+import { getProjects, getProject } from '../store/ProjectReducer';
+import { createLog, setCurrentLog } from '../store/LogReducer';
 import {setCurrentTask} from '../store/TaskReducer';
 import { connect } from 'react-redux';
 import TeamListScreen from '../screens/TeamListScreen';
 import BoardStackScreen from '../stacks/BoardStackScreen';
+import TextInput from '../components/TextInput';
 
 
 
@@ -21,42 +22,37 @@ import BoardStackScreen from '../stacks/BoardStackScreen';
 const UserHomeNavigatorScreen = props => {
   const [visibleProjectMenu, setVisibleProjectMenu] = React.useState(false);
   const [visibleLogMenu, setVisibleLogMenu] = React.useState(false);
-  const [projectItems, setProjectItems] = useState([]);
-  const [logItems, setLogItems] = useState([]);
   const [projectTitle, setProjectTitle] = useState("Projects");
   const [logTitle, setLogTitle] = useState("Logs");
+  const [logName, setLogName] = useState();
 
   const openProjectMenu = () => setVisibleProjectMenu(true);
   const closeProjectMenu = () => setVisibleProjectMenu(false);
   const openLogMenu = () => setVisibleLogMenu(true);
   const closeLogMenu = () => setVisibleLogMenu(false);
+
+  const [visible, setVisible] = useState(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
   
 
   const [isBoardHeaderView, setIsBoardHeaderView] = useState(true);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
 
   useEffect(()=>{
     props.dispatch(getProjects(props.User.currentUser.id));
   },[props.User.currentUser]);
 
   useEffect(() => {
+    if(props.Project.currentProject)
     setProjectTitle(props.Project.currentProject.productName)
   }, [props.Project.currentProject]);
 
-  useEffect(() => {
-    for (var project of props.Project.items) {
-      setProjectItems(oldArray => [...oldArray, <Menu.Item key={project.id} onPress={() => {}} title={project.productName}/>]);
-    }
-  }, [props.Project.items]);
+  const handleGetProject = (projectId) =>{
+    props.dispatch(getProject(projectId))
+  }
 
-  useEffect(() => {
-    const tempArray =[];
-    for (var log of props.Log.items) {
-      tempArray.push(<Menu.Item key={log.id} onPress={() => setLogToCurrent(log)} title={log.name}/>);
-    }
-    setLogItems(tempArray);
-  }, [props.Log.items]);
+  const renderProjectItems = (projectItems) => projectItems.map((project) => <Menu.Item key={project.id} onPress={() => {handleGetProject(project.id);closeProjectMenu();}} title={project.productName}/> )
+  const renderLogItems = (logItems) => logItems.map((log) => <Menu.Item key={log.id} onPress={() => {setLogToCurrent(log); closeLogMenu();}} title={log.name}/>);
   
   useEffect(() => {
     if(Object.keys(props.Log.currentLog).length !== 0){
@@ -66,7 +62,7 @@ const UserHomeNavigatorScreen = props => {
 
   const gotoAddTask = () => {
     props.dispatch(setCurrentTask({}));
-    props.navigation.navigate('TaskDetailScreen');
+    props.navigation.navigate('TaskNavigator');
   }
 
   const boardHeaderView = (isVisible) => {
@@ -74,7 +70,15 @@ const UserHomeNavigatorScreen = props => {
   }
 
   const setLogToCurrent = (log) => {
+    console.log("log: ", log);
     props.dispatch(setCurrentLog(log))
+  }
+
+  const handleCreateLog = () => {
+    if(logName && props.Project.currentProject.id){
+      props.dispatch(createLog({name: logName, projectId: props.Project.currentProject.id}))
+    }
+    hideDialog();
   }
 
 
@@ -127,9 +131,9 @@ const UserHomeNavigatorScreen = props => {
                     <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
                   </Button>
                   }>
-                {projectItems}
+                {renderProjectItems(props.Project.items)}
                 <Divider />
-                <Menu.Item onPress={() => {props.navigation.navigate('ProjectDetailsScreen')}} title="New Project" />
+                <Menu.Item onPress={() => {props.navigation.navigate('ProjectDetailsScreen'); closeProjectMenu();}} title="New Project" />
               </Menu>
             </View>
           )
@@ -154,17 +158,35 @@ const UserHomeNavigatorScreen = props => {
                   <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
                 </Button>
                 }>
-              {logItems}
+              {renderLogItems(props.Log.items)}
               <Divider />
-              <Menu.Item onPress={() => {console.log('todo')}} title="New Sprint" />
+              <Menu.Item onPress={()=>{showDialog(); closeLogMenu();}} title="New Sprint" />
             </Menu>
+            <Portal>
+              <Dialog visible={visible} onDismiss={hideDialog}>
+                <Dialog.Title>Create new Log/Sprint</Dialog.Title>
+                <Dialog.Content>
+                  <TextInput
+                    label="Name"
+                    returnKeyType="next"
+                    value={logName}
+                    onChangeText={text => {setLogName(text)}}
+                    keyboardType="default"
+                  />
+                </Dialog.Content>
+                <Dialog.Actions>
+                <Button mode="outlined" onPress={hideDialog} style={{marginRight:10}}>Cancel</Button>
+                  <Button mode="contained" onPress={handleCreateLog}>Create!</Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
           </View>
           )
           ),
           headerRight: () => (
             ( isBoardHeaderView &&
             <View>
-              <Button mode="contained" style={{marginRight:15, paddingVertical: -1}} onPress={gotoAddTask}>Add Task</Button>
+              <Button mode="contained" disabled={!props.Log.currentLog} style={{marginRight:15, paddingVertical: -1}} onPress={gotoAddTask}>Add Task</Button>
             </View>
             )
           ),

@@ -1,68 +1,140 @@
 import React, { useState, useEffect }  from 'react';
 import { View, StyleSheet, Text, Alert, Modal, Pressable} from 'react-native';
-import { Headline } from 'react-native-paper';
+import { Headline, Dialog, Portal, Button, TextInput, Menu} from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { updateSubtask } from '../store/SubtaskReducer';
 
 
 const TaskItem = (props) => {
+  const [statusLabel, setStatusLabel] = useState("Status");
   const [modalVisible, setModalVisible] = useState(false);
+  const [visibleStatusMenu, setVisibleStatusMenu] = useState(false);
+  const openStatusMenu = () => setVisibleStatusMenu(true);
+  const closeStatusMenu = () => setVisibleStatusMenu(false);
+  const statuses = [
+    {
+      label: 'Open',
+      value: 1,
+    },
+    {
+      label: 'Development',
+      value: 2,
+    },
+    {
+      label: 'Testing',
+      value: 3,
+    },
+    {
+      label: 'Closed',
+      value: 4,
+    },
+  ]
+  const [subtask, setSubtask] = useState({
+    name: "",
+    description: "",
+    statusId: 1,
+    actualHours: 0,
+    originalHours: 0,
+    reestimateToComplete: 0
+  });
 
   useEffect(()=>{
-    console.log
+    setSubtask(props.item)
   },[])
+  useEffect(()=>{
+    setStatusLabel(statuses[subtask.statusId - 1].label)
+  },[subtask])
+  
+  const updateStatus = (index) => {
+    setStatusLabel(statuses[index].label)
+    setSubtask({...subtask, statusId: statuses[index].value});
+    closeStatusMenu();
+  }
+
+  const handleUpdateSubtask = () => {
+    props.dispatch(updateSubtask(subtask.id, subtask));
+    setModalVisible(false);
+  }
 
   return (
     <TouchableOpacity
       onPress={()=>{setModalVisible(true)}}>
       <View style={styles.item}>
-        <Text>[Priority: {props.priorityNumber} ]</Text>
-        <Headline>{props.name}</Headline>
-        <Text>{props.description}</Text>
+        <Text>[Priority: {props.item.priorityNumber} ]</Text>
+        <Headline>{props.item.name}</Headline>
+        <Text>{props.item.description}</Text>
         <View style={{flexDirection: 'row'}}>
           <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
-          <Text style={{width: '50%', textAlign: 'right' }}>Status: {props.statusId}</Text>
+          <Text style={{width: '50%', textAlign: 'right' }}>Status: {props.item.statusId}</Text>
         </View>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>[Priority: {props.priorityNumber} ]</Text>
-            <Headline style={{width: 320}}>{props.name}</Headline>
-            <Text>{props.description}</Text>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
-              <Text style={{width: '50%', textAlign: 'right' }}>Status:{props.statusId}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginTop: 30}}>
-              <Pressable
-                style={[styles.button, styles.buttonEdit]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={{
-                  color: "#826cff",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}>Edit</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Close</Text>
-              </Pressable>
-            </View>
-           
-          </View>
-        </View>
-      </Modal>
+      <Portal>
+          <Dialog visible={modalVisible} onDismiss={()=>setModalVisible(false)}>
+            <Dialog.Title>Edit Subtask Item</Dialog.Title>
+            <Dialog.Content>
+              <Text>Name</Text>
+              <TextInput
+                label="Name"
+                returnKeyType="next"
+                value={subtask.name}
+                onChangeText={text => setSubtask({ ...subtask, name: text })}
+                keyboardType="default"
+              />
+              <Text>Description</Text>
+              <TextInput
+                label="Description"
+                returnKeyType="next"
+                value={subtask.description}
+                onChangeText={text => setSubtask({ ...subtask, description: text })}
+                keyboardType="default"
+              />
+              <Text>Original Hours</Text>
+              <TextInput
+                label="Original Hours"
+                returnKeyType="next"
+                value={subtask.originalHours.toString()}
+                keyboardType="numeric"
+                disabled={true}
+              />
+              <Text>Actual Hours</Text>
+              <TextInput
+                label="Actual Hours"
+                returnKeyType="next"
+                value={subtask.actualHours.toString()}
+                onChangeText={text => setSubtask({ ...subtask, actualHours: parseInt(text) })}
+                keyboardType="numeric"
+              />
+              <Text>Estimate to Complete</Text>
+              <TextInput
+                label="Actual Hours"
+                returnKeyType="next"
+                value={subtask.reestimateToComplete.toString()}
+                onChangeText={text => setSubtask({ ...subtask, reestimateToComplete: parseInt(text) })}
+                keyboardType="numeric"
+              />
+              <Menu
+                visible={visibleStatusMenu}
+                onDismiss={closeStatusMenu}
+                style={{left: 230, top: 350}}
+                anchor={
+                  <Button onPress={openStatusMenu} mode="outlined"  style={{ backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+                    {statusLabel}
+                    <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, marginLeft:5}}/>
+                  </Button>
+                  }>
+                <Menu.Item onPress={() => {updateStatus(0)}} title={statuses[0].label} />
+                <Menu.Item onPress={() => {updateStatus(1)}} title={statuses[1].label} />
+                <Menu.Item onPress={() => {updateStatus(2)}} title={statuses[2].label} />
+                <Menu.Item onPress={() => {updateStatus(3)}} title={statuses[3].label} />
+              </Menu>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="contained" onPress={()=>{setModalVisible(false)}} style={{marginRight: 10}}>Cancel</Button>
+              <Button mode="outlined" onPress={handleUpdateSubtask}>Save</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
     </TouchableOpacity>
    
   );

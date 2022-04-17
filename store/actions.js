@@ -10,6 +10,10 @@ export const SET_TASKS = "SET_TASKS";
 export const UPDATE_TASKS_BY_STATUS = "UPDATE_TASKS_BY_STATUS";
 export const SET_CURRENT_TASK = "SET_CURRENT_TASK";
 export const SET_SUBTASKS = "SET_SUBTASKS";
+export const SET_CURRENT_SUBTASK = "SET_CURRENT_SUBTASK";
+export const SET_PROJECT_REPORTS = "SET_PROJECT_REPORTS";
+export const ADD_PROJECT = "ADD_PROJECT";
+export const ADD_LOG = "ADD_LOG";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -59,4 +63,20 @@ export const Set_Current_Task = (task) => ({
 export const Set_Subtasks = (subtasks) => ({
   type: SET_SUBTASKS,
   payload: subtasks
+})
+export const Set_Current_Subtask = (subtask) => ({
+  type: SET_CURRENT_SUBTASK,
+  payload: subtask
+})
+export const Set_Project_Reports = (reports) => ({
+  type: SET_PROJECT_REPORTS,
+  payload: reports
+})
+export const Add_Project = (project) => ({
+  type: ADD_PROJECT,
+  payload: project
+})
+export const Add_Log = (log) => ({
+  type: ADD_LOG,
+  payload: log
 })

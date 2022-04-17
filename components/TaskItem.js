@@ -18,7 +18,8 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import {setCurrentTask} from '../store/TaskReducer';
 import { Modal, Portal, Text, Button, Provider, Headline } from 'react-native-paper';
-import {updateTask} from '../store/TaskReducer'
+import {copyTask} from '../store/TaskReducer';
+import { connect } from 'react-redux';
 
 
 const { multiply, sub } = Animated;
@@ -58,8 +59,8 @@ const TaskItem = (props) => {
           }
         }}
         overSwipe={OVERSWIPE_DIST}
-        renderUnderlayLeft={() => <UnderlayLeft drag={drag} />}
-        renderUnderlayRight={() => <UnderlayRight item={item} {...props} />}
+        renderUnderlayLeft={() => <UnderlayLeft {...props} drag={drag} />}
+        renderUnderlayRight={() => <UnderlayRight {...props} item={item} {...props} />}
         snapPointsLeft={[50, 150, 175]}
         snapPointsRight={[175]}
       >
@@ -75,7 +76,6 @@ const TaskItem = (props) => {
             <Text>{item.description}</Text>
             <View style={{flexDirection: 'row'}}>
               <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
-              <Text style={{width: '50%', textAlign: 'right' }}>Number of Subtasks: 4</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -130,8 +130,9 @@ function UnderlayRight(props) {
       value: 4,
     },
   ]
-  const updateStatus = (statusId) => {
-    props.dispatch(updateTask(item.id, {statusId: statusId}))
+  const handleCopyTask = (taskId, logId) => {
+    props.dispatch(copyTask(taskId, logId));
+    hideModal();
   }
 
   const { close } = useSwipeableItemParams();
@@ -142,10 +143,10 @@ function UnderlayRight(props) {
           <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
             <Headline>Select status change: </Headline>
             { 
-            statuses.map((status) => {
-              if(status.value !== item.statusId)
+            props.Log.items.map((log) => {
+              if(log.id !== item.logId)
                 return (
-                  <Button mode="contained" key={status.value} onPress={() => updateStatus(status.value)} style={{margin: 5}}>{status.label}</Button>
+                  <Button mode="contained" key={log.id} onPress={() => handleCopyTask(item.id, log.id)} style={{margin: 5}}>{log.name}</Button>
                 );
               }
             )
@@ -157,8 +158,12 @@ function UnderlayRight(props) {
     </Animated.View>
   );
 }
+const mapStateToProps = (state) => {
+  const { Log, } = state
+  return { Log, }
+};
 
-export default TaskItem
+export default  connect(mapStateToProps)(TaskItem)
 
 const styles = StyleSheet.create({
   container: {

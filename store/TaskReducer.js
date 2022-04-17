@@ -67,7 +67,8 @@ export const updateTasks = (tasks) => (dispatch, getState) => {
         .then(
           response => {
             console.log("newdata", response.data)
-            dispatch(Update_Tasks_By_Status(response.data))
+
+            dispatch(Update_Tasks_By_Status(response.data.sort((a, b) => a.priorityNumber - b.priorityNumber)))
           },
           err => {
             console.log(err)
@@ -84,6 +85,7 @@ export const updateTasks = (tasks) => (dispatch, getState) => {
 export const updateTask = (taskId, data) => (dispatch, getState) => {
   (async () => {
     try {
+      console.log(data)
       const user = await AsyncStorage.getItem('currentLoggedUser')
       const currentLoggedUser = JSON.parse(user);
       const userId = currentLoggedUser.user.id;
@@ -139,6 +141,34 @@ export const createTask = (data) => (dispatch, getState) => {
   })().catch(e => console.log("Caught: " + e));
 }
 
+export const copyTask = (taskId, logId) => (dispatch, getState) => {
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      if(currentLoggedUser !== null) {
+        axios.post(API_URL + `/v1/tasks/` + taskId + `/copyTask`, {logId: logId},{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            //dispatch(Set_Current_Task(response.data));
+          },
+          err => {
+            console.log(err)
+          }
+        );
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
+
 const formatTasksByStatus = (items, key) => {
   return items.reduce((group, task) => {
     const { statusId } = task;
@@ -149,6 +179,7 @@ const formatTasksByStatus = (items, key) => {
 }
 
 export const setCurrentTask = (data) => (dispatch, getState) => {
+  console.log("reinitialized")
   dispatch(Set_Current_Task(data));
 }
 

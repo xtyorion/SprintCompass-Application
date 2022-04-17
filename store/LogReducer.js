@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Set_Logs, SET_LOGS, Set_Current_Log, SET_CURRENT_LOG,} from './actions';
+import { Set_Logs, SET_LOGS, Set_Current_Log, SET_CURRENT_LOG,Add_Log,ADD_LOG} from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -15,6 +15,8 @@ export const logReducer = (state = INITIAL_STATE, action) => {
       return {...state, items: action.payload}
     case SET_CURRENT_LOG: 
       return {...state, currentLog: action.payload}
+    case ADD_LOG:
+        state.items.push(action.payload)
     default:
       return state
   }
@@ -58,9 +60,7 @@ export const createLog = (data) => (dispatch, getState) => {
     try {
       const user = await AsyncStorage.getItem('currentLoggedUser')
       const currentLoggedUser = JSON.parse(user);
-      const userId = currentLoggedUser.user.id;
-      Object.assign(data,{userId: userId});
-      console.log(data)
+
       if(currentLoggedUser !== null) {
         axios.post(API_URL + `/v1/logs/`, data,{
           headers: {
@@ -70,7 +70,7 @@ export const createLog = (data) => (dispatch, getState) => {
         })
         .then(
           response => {
-            //dispatch(Add_Log({...data, id: Date.now(), senderId: currentLoggedUser.user}));
+            dispatch(Add_Log(response.data));
           },
           err => {
             console.log(err)

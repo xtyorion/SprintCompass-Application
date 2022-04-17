@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity,SafeAreaView, StyleSheet, ScrollView, StatusBar } from 'react-native';
+import { View, TouchableOpacity,SafeAreaView, StyleSheet, ScrollView, KeyboardAvoidingView  } from 'react-native';
 import { Button, Headline, Text, Menu, Divider } from 'react-native-paper';
 import Background from '../components/Background';
 import TextInput from '../components/TextInput';
 import { connect } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {createTask} from '../store/TaskReducer'
+import {createTask, updateTask} from '../store/TaskReducer';
 
 
 const TaskDetailScreen = (props) => {
@@ -16,7 +16,9 @@ const TaskDetailScreen = (props) => {
     statusId: 1,
     members: [],
     initialRelativeEstimate: 0,
-    initialEstimatedCost: 0
+    initialEstimatedCost: 0,
+    updatedRelativeEstimate: 0,
+    updatedEstimatedCost: 0,
   };
   const [title, setTitle] = useState("Add Task");
   const [buttonTitle, setButtonTitle] = useState("Create");
@@ -28,8 +30,10 @@ const TaskDetailScreen = (props) => {
   const [visibleLogMenu, setVisibleLogMenu] = useState(false);
   const openLogMenu = () => setVisibleLogMenu(true);
   const closeLogMenu = () => setVisibleLogMenu(false);
-
-  const [logItems, setLogItems] = useState([]);
+  const [visibleTeamMenu, setVisibleTeamMenu] = useState(false);
+  const openTeamMenu = () => setVisibleTeamMenu(true);
+  const closeTeamMenu = () => setVisibleTeamMenu(false);
+  const [isTaskMovable, setIsTaskMovable] = useState(true);
 
   const statuses = [
     {
@@ -65,7 +69,10 @@ const TaskDetailScreen = (props) => {
       setTask(props.Task.currentTask)
       setTitle("Edit Task")
       setButtonTitle("Save")
-      setStatusLabel(statuses[task.statusId].label)
+      setStatusLabel(statuses[task.statusId-1].label)
+      setLogLabel(()=>{ 
+        return props.Log.items.find( (item) => item.id === props.Task.currentTask.logId).name 
+      })
     }
   },[props.Task.currentTask]);
 
@@ -77,9 +84,23 @@ const TaskDetailScreen = (props) => {
     }
    
   },[props.Log.items]);
+  useEffect(()=> {
+    if(props.Subtask.items && props.Subtask.items.length > 0)
+    props.Subtask.items.forEach((item)=>{if (item.statusId === 4) setIsTaskMovable(false)})
+   
+  },[props.Subtask.items]);
 
   const handleTasksCreation = () => {
-    props.dispatch(createTask(task));
+    if (task.id){
+      // const members = task.members;
+      // members.push('62293d8fe647ac672cc76339');
+      // setTask({...task, members: members})
+      // console.log(task)
+      props.dispatch(updateTask(task.id, task));
+    } else{
+      props.dispatch(createTask(task));
+    }
+    
     props.boardHeaderView(true)
     props.navigation.navigate('BoardNavigator')
   }
@@ -91,15 +112,16 @@ const TaskDetailScreen = (props) => {
   const updateStatus = (index) => {
     setStatusLabel(statuses[index].label)
     setTask({...task, statusId: statuses[index].value});
+    closeStatusMenu();
   }
   const updateLog = (log) => {
     if (log) {
       setLogLabel(log.name);
       setTask({...task, logId: log.id});
+      closeLogMenu();
     }
-   
-    
   }
+
 
   return (
     <Background>
@@ -114,13 +136,15 @@ const TaskDetailScreen = (props) => {
           autoCompleteType="name"
           textContentType="name"
           keyboardType="default"
+          style={{marginTop:60}}
         />
+        
         <Menu
-          visible={visibleLogMenu}
-          onDismiss={closeLogMenu}
+          visible={visibleTeamMenu}
+          onDismiss={closeTeamMenu}
           style={{left: 205, top: 230}}
           anchor={
-            <Button onPress={openLogMenu} mode="outlined" style={{backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+            <Button onPress={openTeamMenu} mode="outlined" style={{backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
               {logLabel}
               <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, right:5}}/>
             </Button>
@@ -129,6 +153,7 @@ const TaskDetailScreen = (props) => {
             <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name}/>
           ))}
         </Menu>
+        
         <TextInput
           label="Description"
           returnKeyType="next"
@@ -146,17 +171,18 @@ const TaskDetailScreen = (props) => {
         <TextInput
           label="Initial Relative Estimate"
           returnKeyType="next"
-          value={task.initialRelativeEstimate?.toString()}
-          onChangeText={text => setTask({ ...task, initialRelativeEstimate: parseInt(text) })}
+          value={task.initialRelativeEstimate.toString()}
+          onChangeText={text => {setTask({ ...task, initialRelativeEstimate: parseInt(text), 
+            initialEstimatedCost: parseInt(text) * props.Project.currentProject.numberOfHours * 65 });}}
           keyboardType="numeric"
         />
         
         <TextInput
-          label="Create a Subtask"
+          label="Initial Estimated Cost"
           returnKeyType="next"
-          value={task.initialEstimatedCost?.toString()}
-          onChangeText={text => setTask({ ...task, initialEstimatedCost: parseInt(text) })}
+          value={task.initialEstimatedCost.toString()}
           keyboardType="numeric"
+          disabled={true}
         />
         <View
           style={{
@@ -175,6 +201,7 @@ const TaskDetailScreen = (props) => {
             <Menu.Item onPress={() => {updateStatus(0)}} title={statuses[0].label} />
             <Menu.Item onPress={() => {updateStatus(1)}} title={statuses[1].label} />
             <Menu.Item onPress={() => {updateStatus(2)}} title={statuses[2].label} />
+            <Menu.Item onPress={() => {updateStatus(3)}} title={statuses[3].label} />
           </Menu>
           <Menu
             visible={visibleLogMenu}
@@ -187,18 +214,18 @@ const TaskDetailScreen = (props) => {
               </Button>
               }>
             {props.Log.items.map(item => (
-              <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name}/>
+              <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name} disabled={!isTaskMovable}/>
             ))}
           </Menu>
         </View>
-        
+       
         </ScrollView>
       </SafeAreaView>
       <Button style={styles.button} mode="contained" onPress={handleTasksCreation}>
         {buttonTitle}
       </Button>
       <Button style={styles.button} mode="outlined" onPress={handleBack}>
-        Back
+        Back                             
       </Button>
     </Background>
     
@@ -206,8 +233,8 @@ const TaskDetailScreen = (props) => {
   );
 }
 const mapStateToProps = (state) => {
-  const { Task, Log } = state
-  return { Task, Log }
+  const { Task, Log, Subtask, Project } = state
+  return { Task, Log, Subtask, Project}
 };
 
 const styles = StyleSheet.create({

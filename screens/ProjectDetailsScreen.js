@@ -6,7 +6,7 @@ import TextInput from '../components/TextInput';
 import Logo from '../components/Logo';
 import {styles} from '../styles/styles';
 import { connect } from 'react-redux';
-import { createProject } from '../store/ProjectReducer';
+import { createProject, getProjects } from '../store/ProjectReducer';
 
 const ProjectDetailsScreen = (props) => {
   const [project, setProject] = useState({
@@ -20,6 +20,7 @@ const ProjectDetailsScreen = (props) => {
 
   const handleCreateProject = () => {
     props.dispatch(createProject(project));
+    props.navigation.goBack(null);
   }
 
   return (
@@ -49,8 +50,8 @@ const ProjectDetailsScreen = (props) => {
       <TextInput
         label="Number of hours per story point"
         returnKeyType="next"
-        value={project.numberOfHours}
-        onChangeText={text => setProject({...project, numberOfHours: text})}
+        value={project.numberOfHours.toString()}
+        onChangeText={text => setProject({...project, numberOfHours:parseInt(text)})}
         autoCapitalize="none"
         textContentType="none"
         keyboardType="numeric"
@@ -58,8 +59,8 @@ const ProjectDetailsScreen = (props) => {
       <TextInput
         label="Total Estimated number of Story Points"
         returnKeyType="next"
-        value={project.totalEstimatedNumberOfStoryPoints}
-        onChangeText={text => setProject({...project, totalEstimatedNumberOfStoryPoints: text})}
+        value={project.totalEstimatedNumberOfStoryPoints.toString()}
+        onChangeText={text => setProject({...project, totalEstimatedNumberOfStoryPoints: parseInt(text)})}
         autoCapitalize="none"
         textContentType="none"
         keyboardType="numeric"
@@ -67,8 +68,8 @@ const ProjectDetailsScreen = (props) => {
       <TextInput
         label="Total Estimated cost for the application development"
         returnKeyType="next"
-        value={project.totalEstimatedCost}
-        onChangeText={text => setProject({...project, totalEstimatedCost: text})}
+        value={project.totalEstimatedCost.toString()}
+        onChangeText={text => setProject({...project, totalEstimatedCost: parseInt(text)})}
         autoCapitalize="none"
         textContentType="none"
         keyboardType="numeric"
@@ -82,8 +83,8 @@ const ProjectDetailsScreen = (props) => {
   );
 }
 const mapStateToProps = (state) => {
-  const { Project } = state
-  return { Project }
+  const { Project, User } = state
+  return { Project, User }
 };
 
 export default connect(mapStateToProps)(ProjectDetailsScreen);
