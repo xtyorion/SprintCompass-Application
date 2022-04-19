@@ -14,6 +14,8 @@ export const SET_CURRENT_SUBTASK = "SET_CURRENT_SUBTASK";
 export const SET_PROJECT_REPORTS = "SET_PROJECT_REPORTS";
 export const ADD_PROJECT = "ADD_PROJECT";
 export const ADD_LOG = "ADD_LOG";
+export const SET_CURRENT_TEAM = "SET_CURRENT_TEAM";
+export const SET_AVAILABLE_USERS = "SET_AVAILABLE_USERS";
 
 export const Logout = (user) => ({
   type: LOGOUT,
@@ -79,4 +81,12 @@ export const Add_Project = (project) => ({
 export const Add_Log = (log) => ({
   type: ADD_LOG,
   payload: log
+})
+export const Set_Current_Team = (team) => ({
+  type: SET_CURRENT_TEAM,
+  payload: team
+})
+export const Set_Available_Users = (users) => ({
+  type: SET_AVAILABLE_USERS,
+  payload: users
 })

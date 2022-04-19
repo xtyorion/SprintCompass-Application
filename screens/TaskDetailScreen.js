@@ -14,7 +14,6 @@ const TaskDetailScreen = (props) => {
     description: '',
     logId: '',
     statusId: 1,
-    members: [],
     initialRelativeEstimate: 0,
     initialEstimatedCost: 0,
     updatedRelativeEstimate: 0,
@@ -30,9 +29,6 @@ const TaskDetailScreen = (props) => {
   const [visibleLogMenu, setVisibleLogMenu] = useState(false);
   const openLogMenu = () => setVisibleLogMenu(true);
   const closeLogMenu = () => setVisibleLogMenu(false);
-  const [visibleTeamMenu, setVisibleTeamMenu] = useState(false);
-  const openTeamMenu = () => setVisibleTeamMenu(true);
-  const closeTeamMenu = () => setVisibleTeamMenu(false);
   const [isTaskMovable, setIsTaskMovable] = useState(true);
 
   const statuses = [
@@ -92,10 +88,6 @@ const TaskDetailScreen = (props) => {
 
   const handleTasksCreation = () => {
     if (task.id){
-      // const members = task.members;
-      // members.push('62293d8fe647ac672cc76339');
-      // setTask({...task, members: members})
-      // console.log(task)
       props.dispatch(updateTask(task.id, task));
     } else{
       props.dispatch(createTask(task));
@@ -123,6 +115,7 @@ const TaskDetailScreen = (props) => {
   }
 
 
+
   return (
     <Background>
       <SafeAreaView style={styles.container}>
@@ -138,21 +131,6 @@ const TaskDetailScreen = (props) => {
           keyboardType="default"
           style={{marginTop:60}}
         />
-        
-        <Menu
-          visible={visibleTeamMenu}
-          onDismiss={closeTeamMenu}
-          style={{left: 205, top: 230}}
-          anchor={
-            <Button onPress={openTeamMenu} mode="outlined" style={{backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
-              {logLabel}
-              <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, right:5}}/>
-            </Button>
-            }>
-          {props.Log.items.map(item => (
-            <Menu.Item key={item.id} onPress={()=>updateLog(item)} title={item.name}/>
-          ))}
-        </Menu>
         
         <TextInput
           label="Description"

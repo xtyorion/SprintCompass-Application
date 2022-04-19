@@ -30,55 +30,211 @@ import {
 const UserHomeScreen = (props) => {
   const [labels, setLabels] = useState([]);
   const [velocityData, setVelocityData] = useState([]);
+  const [project, setProject] = useState({});
+  const [logSet, setLogSet] = useState({});
   const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
 
   useEffect(() => {
-    console.log(props.Project.reports)
+   // console.log(props.Project.reports)
     props.dispatch(getReports(props.Project.currentProject.id))
+    setProject(props.Project.currentProject)
   }, [props.Project.currentProject.id]);
   useEffect(() => {
-    console.log(props.Project.reports)
+    //console.log(props.Project.reports)
     props.dispatch(getReports(props.Project.currentProject.id))
   }, [props.Task.items]);
   useEffect(() => {
     if (props.Project.reports.logSet){
       setLabels(Object.keys(props.Project.reports.logSet).sort((a, b) => a.localeCompare(b)))
+      setLogSet(props.Project.reports.logSet);
     }
 
-    console.log("reports", props.Project.reports.logSet)
+    //console.log("reports", props.Project.reports.logSet)
   }, [props.Project.reports]);
   useEffect(() => {
     if (labels.length > 0){
       setVelocityData(formatVelocityData());
     }
 
-    console.log("reports", props.Project.reports.logSet)
+    //console.log("reports", props.Project.reports.logSet)
   }, [labels]);
 
-  var data = [{
-    "name": "John",
-    "city": "Seattle"
-  },
-  {
-    "name": "Mike",
-    "city": "Los Angeles"
-  },
-  {
-    "name": "Zach",
-    "city": "New York"
-  }
-];
 
-const excel = async () => {
-  var ws = XLSX.utils.json_to_sheet(data);
-  var wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Cities");
+
+const generateReport = async (sprintName) => {
+  let data = [];
+  let totalHours = 0;
+  if(Object.keys(logSet).length !== 0){
+    const orderedTask = Object.keys(logSet[sprintName]).sort().reduce(
+      (obj, key) => { 
+        obj[key] = logSet[sprintName][key]; 
+        return obj;
+      }, 
+      {}
+    );
+    Object?.entries(orderedTask).map(([key, value])=> { // task
+      data.push({
+        "Priority": value["priorityNumber"],
+        "User Stories": value["name"],
+        "Team Member": "",
+        "Actual Hours": "",
+        // "Sprint": sprintName
+      })
+      if (value["subtask"].length > 0){
+        value["subtask"].forEach((subtask) => {
+          data.push({
+            "Priority": "",
+            "User Stories": "",
+            "Team Member": props.Project.currentProject.members.find((member) => member.id === subtask.teamId).name,
+            "Actual Hours": subtask.actualHours
+          })
+          totalHours += subtask.actualHours;
+        })
+      }
+    })
+    data.push({
+      "Priority": "",
+      "User Stories": "Total",
+      "Team Member": "",
+      "Actual Hours": totalHours
+    })
+  }
+  var Heading = [
+    ["", `Project Team Name: ${project.teamName}`],
+  ];
+  let ws = XLSX.utils.book_new();
+
+
+  XLSX.utils.sheet_add_aoa(ws, Heading);
+  XLSX.utils.sheet_add_json(ws, data, { origin: 'A2', skipHeader: false });
+
+
+  var wscols = [
+    {wch:6},
+    {wch:100},
+    {wch:20, },
+    {wch:10}
+  ];
+
+  ws['!cols'] = wscols; 
+  let wb = XLSX.utils.book_new();
+
+
+
+
+  XLSX.utils.book_append_sheet(wb, ws, "Summary");
   const wbout = XLSX.write(wb, {
     type: 'base64',
     bookType: "xlsx"
   });
   const uri = FileSystem.cacheDirectory + 'cities.xlsx';
-  console.log(`Writing to ${JSON.stringify(uri)} with text: ${wbout}`);
+  //console.log(`Writing to ${JSON.stringify(uri)} with text: ${wbout}`);
+  await FileSystem.writeAsStringAsync(uri, wbout, {
+    encoding: FileSystem.EncodingType.Base64
+  });
+
+  await Sharing.shareAsync(uri, {
+    mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    dialogTitle: 'MyWater data',
+    UTI: 'com.microsoft.excel.xlsx'
+  });
+}
+
+const generateConsolidatedReport = async (sprintName) => {
+  let data = [];
+  let totalOrginalHours = 0;
+  let totalActualHours = 0;
+  let totalReestimateHours = 0;
+  let totalPercentage = 0;
+  let taskCount = 0;
+  console.log(logSet)
+  if(Object.keys(logSet).length !== 0){
+    const orderedTask = Object.keys(logSet[sprintName]).sort().reduce(
+      (obj, key) => { 
+        obj[key] = logSet[sprintName][key]; 
+        return obj;
+      }, 
+      {}
+    );
+    taskCount = Object.keys(orderedTask).length;
+    Object?.entries(orderedTask).map(([key, value])=> { // task
+      const totalTaskPercentage = Math.round((value.actualHours /(value.actualHours + value.reestimateHours)) * 100);
+      data.push({
+        "User Stories/Sub tasks": value.name,
+        "Team Member": "",
+        "Percentage Complete":  totalTaskPercentage + "%",
+        "Original Hours Est.": value.originalHours,
+        "Actual Hours Worked": value.actualHours,
+        "Re-Estimate to Complete": value.reestimateHours,
+      })
+      totalOrginalHours += value.originalHours;
+      totalActualHours += value.actualHours;
+      totalReestimateHours += value.reestimateHours;
+      totalPercentage += totalTaskPercentage;
+      
+
+      if (value["subtask"].length > 0){
+        value["subtask"].forEach((subtask) => {
+          data.push({
+            "User Stories/Sub tasks": "                                        " + subtask.name,
+            "Team Member": props.Project.currentProject.members.find((member) => member.id === subtask.teamId).name,
+            "Percentage Complete": "",
+            "Original Hours Est.": subtask.originalHours,
+            "Actual Hours Worked": subtask.actualHours,
+            "Re-Estimate to Complete": subtask.reestimateToComplete,
+          })
+        })
+      }
+      data.push({
+        "User Stories/Sub tasks": "",
+        "Team Member": "",
+        "Percentage Complete": "",
+        "Original Hours Est.": "",
+        "Actual Hours Worked": "",
+        "Re-Estimate to Complete": "",
+      })
+    })
+    data.push({
+      "User Stories/Sub tasks": "Total",
+      "Team Member": "",
+      "Percentage Complete": ((totalPercentage / (taskCount*100)) * 100) + "%",
+      "Original Hours Est.": totalOrginalHours,
+      "Actual Hours Worked": totalActualHours,
+      "Re-Estimate to Complete": totalReestimateHours,
+    })
+  }
+  var Heading = [
+    [`Project Team Name: ${project.teamName}`],
+  ];
+  let ws = XLSX.utils.book_new();
+
+
+  XLSX.utils.sheet_add_aoa(ws, Heading);
+  XLSX.utils.sheet_add_json(ws, data, { origin: 'A2', skipHeader: false });
+
+
+  var wscols = [
+    {wch:100},
+    {wch:20},
+    {wch:10},
+    {wch:10},
+    {wch:10},
+    {wch:10}
+  ];
+
+  ws['!cols'] = wscols; 
+  let wb = XLSX.utils.book_new();
+
+
+
+
+  XLSX.utils.book_append_sheet(wb, ws, "Summary");
+  const wbout = XLSX.write(wb, {
+    type: 'base64',
+    bookType: "xlsx"
+  });
+  const uri = FileSystem.cacheDirectory + 'cities.xlsx';
+  //console.log(`Writing to ${JSON.stringify(uri)} with text: ${wbout}`);
   await FileSystem.writeAsStringAsync(uri, wbout, {
     encoding: FileSystem.EncodingType.Base64
   });
@@ -119,7 +275,6 @@ const formatVelocityData = () => {
     formattedData.push(originalHours);
     formattedData.push(actualHours);
   } 
-  console.log(formattedData)
   return formattedData;
 }
 
@@ -128,27 +283,7 @@ const formatVelocityData = () => {
     <SafeAreaView >
       <ScrollView style={{marginBottom: 75}}>
         <Background>
-          <Headline style={{alignSelf:"center"}}>Percentage Completion</Headline>
-          <ProgressChart
-            data={[1, 0.6, 0]}
-            width={Dimensions.get('window').width - 16}
-            height={220}
-            chartConfig={{
-              backgroundColor: 'transparent',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
-              decimalPlaces: 2,
-              color: (opacity = 10) => `rgba(130, 108, 255, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-              marginBottom: -10
-            }}
-          />
+          
           <Headline style={{alignSelf:"center"}}>Project Velocity: </Headline>
           <Subheading style={{alignSelf:"center"}}>   
             <MaterialCommunityIcons name="checkbox-blank-circle" color={'#BE95FF'} size={20} />
@@ -188,14 +323,6 @@ const formatVelocityData = () => {
                 <Card.Title title="Project" subtitle="Velocity" left={()=><Avatar.Text size={45} label={props.Project.reports.ProjectVelocity} />} />
               </Card>
             </View>
-            <View style={{flexDirection: "row"}}>
-              <Card style={{width:170, margin:5}}>
-                  <Card.Title title="Projected" subtitle="Cost" left={LeftContent} />
-                </Card>
-                <Card style={{width:170, margin:5}}>
-                  <Card.Title title="Delivery" subtitle="Date" left={LeftContent} />
-              </Card>
-            </View>
           </View>
         
           <View style={{flexDirection: "column", marginTop: 20}}>
@@ -203,20 +330,20 @@ const formatVelocityData = () => {
             <Card.Content>
               <View style={{flexDirection: "row"}}>
                 <Card style={{width:170, marginRight:10, paddingHorizontal: 10}}>
-                  <Subheading style={{alignSelf:"center"}}>Sprint</Subheading>
-                  <Button style={{marginBottom: 10}} mode="outlined" onPress={excel}>Product Backlog</Button>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Sprint 1</Button>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Sprint 2</Button>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Sprint 3</Button>
+                  <Subheading style={{alignSelf:"center"}}>Team Member  Work            Summary</Subheading>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>generateReport("Sprint 1")}>Sprint 1</Button>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>generateReport("Sprint 2")}>Sprint 2</Button>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>generateReport("Sprint 3")}>Sprint 3</Button>
                 </Card>
                 <Card style={{width:170, paddingHorizontal: 10}}>
-                  <Subheading style={{alignSelf:"center"}}>Team Member</Subheading>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Vincent M.</Button>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Victoria K</Button>
-                  <Button style={{marginBottom: 10}} mode="outlined" >Carlos P</Button>
+                  <Subheading style={{alignSelf:"flex-start"}}>Consolidated Project Retrospective</Subheading>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>generateConsolidatedReport("Sprint 1")}>Sprint 1</Button>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>genergenerateConsolidatedReportateReport("Sprint 2")}>Sprint 2</Button>
+                  <Button style={{marginBottom: 10}} mode="outlined" onPress={()=>generateConsolidatedReport("Sprint 3")}>Sprint 3</Button>
                 </Card>
               </View>
             </Card.Content>
+           
           </View>
         </Background>
       </ScrollView>

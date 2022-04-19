@@ -1,13 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import { SafeAreaView, FlatList, StyleSheet, StatusBar, View, Text} from 'react-native';
-import { Headline, Dialog, Portal, Button, Colors} from 'react-native-paper';
+import { Headline, Dialog, Portal, Button, Menu} from 'react-native-paper';
 import SubTaskItem from '../components/SubTaskItem';
 import { connect } from 'react-redux';
 import {getSubtasks, createSubtask} from '../store/SubtaskReducer';
 import TextInput from '../components/TextInput';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SubTaskListScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [visibleTeamMenu, setVisibleTeamMenu] = useState(false);
+  const openTeamMenu = () => setVisibleTeamMenu(true);
+  const closeTeamMenu = () => setVisibleTeamMenu(false);
+  const [teamLabel, setTeamLabel] = useState('Team Member');
   const [subtask, setSubtask] = useState({
     name: "",
     description: "",
@@ -16,7 +21,7 @@ const SubTaskListScreen = (props) => {
     actualHours: 0,
     reestimateToComplete: 0,
     taskId: props.Task.currentTask.id,
-    members: ["62293d8fe647ac672cc76339"],
+    teamId: "",
   });
   useEffect(()=>{
     if (props.Task.currentTask.id)
@@ -38,7 +43,13 @@ const SubTaskListScreen = (props) => {
     setModalVisible(false);
     props.dispatch(getSubtasks(props.Task.currentTask.id))
   }
-
+  const updateTeam = (team) => {
+    if (team) {
+      setTeamLabel(team.name);
+      setSubtask({...subtask, teamId: team.id});
+      closeTeamMenu();
+    }
+  }
   return (
     <View>
       <SafeAreaView style={styles.container}>
@@ -77,6 +88,21 @@ const SubTaskListScreen = (props) => {
                 textContentType="name"
                 keyboardType="default"
               />
+              <Text>Assigned Team Member</Text>
+              <Menu
+                visible={visibleTeamMenu}
+                onDismiss={closeTeamMenu}
+                style={{left: 230, top: 290}}
+                anchor={
+                  <Button onPress={openTeamMenu} mode="outlined" style={{backgroundColor: 'white', borderWidth: 1, borderColor: 'gray'}}>
+                    {teamLabel}
+                    <Ionicons name={"chevron-down-outline"} color={'#826cff'} size={20} style={{marginTop: 2, right:5}}/>
+                  </Button>
+                  }>
+                {props.Project?.currentProject.members.map(item => (
+                  <Menu.Item key={item.id} onPress={()=>updateTeam(item)} title={item.name}/>
+                ))}
+              </Menu>
               <Text>Relative Estimate</Text>
               <TextInput
                 label="Original Hours Estimate"

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SET_PROJECTS, ADD_PROJECT, Set_Projects, SET_CURRENT_PROJECT, Set_Current_Project, 
+import { SET_PROJECTS, ADD_PROJECT, Set_Projects, SET_CURRENT_PROJECT, Set_Current_Project, SET_AVAILABLE_USERS, Set_Available_Users,
   Set_Project_Reports, SET_PROJECT_REPORTS, Add_Project} from './actions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -9,6 +9,7 @@ const INITIAL_STATE = {
   currentProject: {},
   items: [],
   reports: {},
+  availableUsers: []
 };
 
 export const projectReducer = (state = INITIAL_STATE, action) => {
@@ -22,6 +23,8 @@ export const projectReducer = (state = INITIAL_STATE, action) => {
       return state;
     case SET_PROJECT_REPORTS: 
       return {...state, reports: action.payload}
+    case SET_AVAILABLE_USERS:
+      return {...state, availableUsers: action.payload}
     default:
       return state
   }
@@ -74,7 +77,6 @@ export const getProject = (projectId) => (dispatch, getState) => {
         .then(
           response => {
             const {data} = response;
-            console.log(data)
             dispatch(Set_Current_Project(data));
           },
           err => {
@@ -134,10 +136,66 @@ export const getReports = (projectId) => (dispatch, getState) => {
         .then(
           response => {
             const {data} = response;
-            console.log(data)
             delete data.logSet["Product Backlog"];
             data.ProjectVelocity = data.TotalEstimatedPoints / Object.keys(data.logSet).length;
             dispatch(Set_Project_Reports(data));
+          },
+          err => {
+            console.log(err)
+          }
+        );
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
+export const getAvailableUsers = (projectId) =>  (dispatch, getState) =>{
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      if(projectId) {
+        axios.get(API_URL + `/v1/projects/` + projectId + `/getAvailableUsers`,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            const {data} = response;
+            dispatch(Set_Available_Users(data));
+          },
+          err => {
+            console.log(err)
+          }
+        ); 
+      }
+    } catch(e) {
+      // error reading value
+      console.log(e)
+    }
+  })().catch(e => console.log("Caught: " + e));
+}
+export const updateProject = (projectId, data) => (dispatch, getState) => {
+  (async () => {
+    try {
+      const user = await AsyncStorage.getItem('currentLoggedUser')
+      const currentLoggedUser = JSON.parse(user);
+      const userId = currentLoggedUser.user.id;
+      if(currentLoggedUser !== null) {
+        axios.put(API_URL + `/v1/projects/` + projectId, data,{
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + currentLoggedUser.tokens.access.token
+          }
+        })
+        .then(
+          response => {
+            dispatch(getProject(projectId));
+            dispatch(getAvailableUsers(projectId));
           },
           err => {
             console.log(err)
