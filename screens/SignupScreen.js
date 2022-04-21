@@ -33,7 +33,7 @@ const SignupScreen = (props) => {
         password: password.value,
       })
     )
-    .then(success => {props.navigation.navigate('HomeScreen');})
+    .then(success => {props.navigation.navigate('LoginScreen');})
     .catch(err => {
         const credentialError = credentialsValidator(err.response.status);
 

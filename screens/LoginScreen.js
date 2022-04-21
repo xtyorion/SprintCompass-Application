@@ -50,12 +50,6 @@ const LoginScreen = (props) => {
     // navigation.navigate('Dashboard');
   };
 
-
-  React.useLayoutEffect(() => {
-    setEmail({ ...email, value: "fake@example.com" });
-    setPassword({ ...password, value: "password1" });
-  }, []);
-
   return (
     <Background>
       <Logo />

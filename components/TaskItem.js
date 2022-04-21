@@ -74,9 +74,6 @@ const TaskItem = (props) => {
             <Text>[Priority: {item.priorityNumber} ]</Text>
             <Text style={styles.text}>{item.name}</Text>
             <Text>{item.description}</Text>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
-            </View>
           </TouchableOpacity>
         </View>
       </SwipeableItem>

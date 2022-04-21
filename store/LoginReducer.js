@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+
 const INITIAL_STATE = {
   isLoggedIn: false,
   auth: {}
@@ -23,7 +24,6 @@ export const loginReducer = (state = INITIAL_STATE, action) => {
 };
 
 export const login = (data) => (dispatch, getState) => {
-  console.log("api url", API_URL);
   return new Promise((resolve, reject) => {
     axios.post(API_URL + `/v1/auth/login`, data,{
       headers: {

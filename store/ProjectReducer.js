@@ -4,7 +4,6 @@ import { SET_PROJECTS, ADD_PROJECT, Set_Projects, SET_CURRENT_PROJECT, Set_Curre
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.REACT_APP_API_URL;
-
 const INITIAL_STATE = {
   currentProject: {},
   items: [],
@@ -67,7 +66,7 @@ export const getProject = (projectId) => (dispatch, getState) => {
     try {
       const user = await AsyncStorage.getItem('currentLoggedUser')
       const currentLoggedUser = JSON.parse(user);
-      if(projectId) {
+      if(projectId != undefined) {
         axios.get(API_URL + `/v1/projects/` + projectId,{
           headers: {
             'Content-Type': 'application/json',
@@ -125,8 +124,9 @@ export const getReports = (projectId) => (dispatch, getState) => {
   (async () => {
     try {
       const user = await AsyncStorage.getItem('currentLoggedUser')
+     
       const currentLoggedUser = JSON.parse(user);
-      if(projectId) {
+      if(projectId != undefined) {
         axios.get(API_URL + `/v1/projects/` + projectId + `/getReports`,{
           headers: {
             'Content-Type': 'application/json',

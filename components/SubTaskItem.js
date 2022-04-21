@@ -87,8 +87,8 @@ const TaskItem = (props) => {
         <Headline>{props.item.name}</Headline>
         <Text>{props.item.description}</Text>
         <View style={{flexDirection: 'row'}}>
-          <Text style={{width: '50%', textAlign: 'left' }}>Assign: Vincent Image</Text>
-          <Text style={{width: '50%', textAlign: 'right' }}>Status: {props.item.statusId}</Text>
+          <Text style={{width: '50%', textAlign: 'left' }}>Assign: {props.Project?.currentProject.members.find( (member) => member.id === subtask.teamId)?.name }</Text>
+          <Text style={{width: '50%', textAlign: 'right' }}>Status: {statuses.find((status) => status.value === props.item.statusId).label}</Text>
         </View>
       </View>
       <Portal>
